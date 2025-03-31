@@ -1,13 +1,34 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React from 'react';
+import Layout from '@/components/Layout';
+import PatientAssessment from '@/components/PatientAssessment';
+import MedicalHistory from '@/components/MedicalHistory';
+import TriageClassification from '@/components/TriageClassification';
+import HospitalNotification from '@/components/HospitalNotification';
+import CurrentCaseInfo from '@/components/CurrentCaseInfo';
+import CaseSummary from '@/components/CaseSummary';
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <Layout>
+      <div className="max-w-7xl mx-auto space-y-6">
+        <CurrentCaseInfo />
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-6">
+            <PatientAssessment />
+            <MedicalHistory />
+          </div>
+          
+          <div className="space-y-6">
+            <TriageClassification />
+            <HospitalNotification />
+          </div>
+        </div>
+        
+        <CaseSummary />
       </div>
-    </div>
+    </Layout>
   );
 };
 
