@@ -10,10 +10,10 @@ const CurrentCaseInfo = () => {
       <CardContent className="p-4">
         <div className="flex justify-between items-start">
           <div>
-            <h2 className="text-xl font-bold">Case #TR-2023-0542</h2>
+            <h2 className="text-xl font-bold">Case #TR-2023-0786</h2>
             <div className="flex items-center mt-1 text-sm text-gray-500">
               <Clock className="h-4 w-4 mr-1" />
-              <span>Started 14:32 (8 min ago)</span>
+              <span>Started 15:12 (12 min ago)</span>
             </div>
           </div>
           <div className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
@@ -29,7 +29,7 @@ const CurrentCaseInfo = () => {
               <User className="h-4 w-4 mr-1" />
               <span>Patient</span>
             </div>
-            <p className="font-medium">Male, 42 years</p>
+            <p className="font-medium">Male, 38 years</p>
             <p>ID: Unknown</p>
           </div>
 
@@ -38,8 +38,8 @@ const CurrentCaseInfo = () => {
               <CalendarClock className="h-4 w-4 mr-1" />
               <span>Incident</span>
             </div>
-            <p className="font-medium">Traffic Accident</p>
-            <p>Vehicle vs. Barrier</p>
+            <p className="font-medium">Two-wheeler Accident</p>
+            <p>Motorcycle vs. Truck</p>
           </div>
 
           <div className="space-y-1">
@@ -47,8 +47,8 @@ const CurrentCaseInfo = () => {
               <MapPin className="h-4 w-4 mr-1" />
               <span>Location</span>
             </div>
-            <p className="font-medium">Gangnam-daero 396</p>
-            <p>Seoul, South Korea</p>
+            <p className="font-medium">NH-48, Km 112</p>
+            <p>Gurgaon, Haryana</p>
           </div>
 
           <div className="space-y-1">
@@ -56,8 +56,8 @@ const CurrentCaseInfo = () => {
               <User className="h-4 w-4 mr-1" />
               <span>Responder</span>
             </div>
-            <p className="font-medium">Park, Ji-hoon</p>
-            <p>Team: Alpha-3</p>
+            <p className="font-medium">Dr. Sharma, Vikas</p>
+            <p>Team: 108-A6</p>
           </div>
         </div>
       </CardContent>

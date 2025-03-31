@@ -23,19 +23,19 @@ const CaseSummary = () => {
           
           <TabsContent value="assessment" className="text-sm space-y-3">
             <p>
-              42-year-old male involved in high-speed MVA with frontal impact. 
-              Patient presents with respiratory distress, chest pain, and decreased
-              breath sounds on the right side.
+              38-year-old male involved in motorcycle accident with a truck. 
+              Patient presents with compound fracture of right tibia/fibula with 
+              active bleeding and signs of early hypovolemic shock.
             </p>
             <p>
-              Vital signs show tachycardia (HR 142), hypotension (BP 90/60), 
-              tachypnea (RR 24), and mild hypoxia (SpO2 92%). AI analysis suggests
-              pneumothorax with 92% confidence.
+              Vital signs show mild tachycardia (HR 128), borderline hypotension (BP 95/65), 
+              and normal oxygen saturation (SpO2 94%). AI analysis confirms compound fracture 
+              with 94% confidence.
             </p>
             <p>
-              Patient has history of asthma and hypertension which may complicate
-              management. Currently classified as Priority 1 (RED) triage status
-              requiring immediate intervention.
+              Patient has history of diabetes and hypertension which may complicate management.
+              Currently classified as Priority 1 (RED) triage status requiring immediate 
+              intervention for hemorrhage control.
             </p>
           </TabsContent>
           
@@ -44,20 +44,20 @@ const CaseSummary = () => {
               <div className="font-medium">Completed Actions:</div>
               <ul className="list-disc list-inside mt-1 text-sm text-gray-700 space-y-1">
                 <li>Primary survey (ABCDE)</li>
-                <li>Oxygen administration via non-rebreather mask</li>
-                <li>IV access established (18G, right AC)</li>
-                <li>ECG monitoring initiated</li>
-                <li>Hospital notification sent</li>
+                <li>Pressure bandage applied to fracture site</li>
+                <li>IV access established (16G, left AC)</li>
+                <li>500ml Ringer's Lactate initiated</li>
+                <li>Hospital notification sent to AIIMS Delhi</li>
               </ul>
             </div>
             
             <div className="text-sm">
               <div className="font-medium">Pending Actions:</div>
               <ul className="list-disc list-inside mt-1 text-sm text-gray-700 space-y-1">
-                <li>Needle decompression if condition deteriorates</li>
-                <li>Fluid resuscitation as needed</li>
+                <li>Splint application for fracture stabilization</li>
+                <li>Additional fluid bolus if hypotension worsens</li>
                 <li>Pain management (considering medication interactions)</li>
-                <li>Continuous vital sign monitoring during transport</li>
+                <li>Serial vital sign assessments during transport</li>
               </ul>
             </div>
           </TabsContent>
@@ -65,28 +65,28 @@ const CaseSummary = () => {
           <TabsContent value="timeline" className="space-y-2">
             <div className="relative pl-5 border-l border-gray-200">
               <div className="absolute left-0 top-1 w-2 h-2 rounded-full bg-primary transform -translate-x-1/2"></div>
-              <div className="text-xs text-gray-500">14:32</div>
+              <div className="text-xs text-gray-500">15:12</div>
               <div className="text-sm font-medium">Incident reported</div>
-              <div className="text-xs text-gray-700 mt-0.5">MVA reported by bystander</div>
+              <div className="text-xs text-gray-700 mt-0.5">MVA reported via 108 helpline</div>
             </div>
             
             <div className="relative pl-5 border-l border-gray-200">
               <div className="absolute left-0 top-1 w-2 h-2 rounded-full bg-primary transform -translate-x-1/2"></div>
-              <div className="text-xs text-gray-500">14:35</div>
+              <div className="text-xs text-gray-500">15:15</div>
               <div className="text-sm font-medium">Team dispatched</div>
-              <div className="text-xs text-gray-700 mt-0.5">Alpha-3 team en route</div>
+              <div className="text-xs text-gray-700 mt-0.5">108-A6 ambulance en route</div>
             </div>
             
             <div className="relative pl-5 border-l border-gray-200">
               <div className="absolute left-0 top-1 w-2 h-2 rounded-full bg-primary transform -translate-x-1/2"></div>
-              <div className="text-xs text-gray-500">14:38</div>
+              <div className="text-xs text-gray-500">15:22</div>
               <div className="text-sm font-medium">Arrived on scene</div>
-              <div className="text-xs text-gray-700 mt-0.5">Patient found in vehicle</div>
+              <div className="text-xs text-gray-700 mt-0.5">Patient found on roadside</div>
             </div>
             
             <div className="relative pl-5">
               <div className="absolute left-0 top-1 w-2 h-2 rounded-full bg-primary transform -translate-x-1/2"></div>
-              <div className="text-xs text-gray-500">14:40</div>
+              <div className="text-xs text-gray-500">15:24</div>
               <div className="text-sm font-medium">TraumaLinker activated</div>
               <div className="text-xs text-gray-700 mt-0.5">AI analysis initiated</div>
             </div>

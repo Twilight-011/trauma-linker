@@ -3,8 +3,25 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Building2, Clock, Send, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useToast } from "@/hooks/use-toast";
 
 const HospitalNotification = () => {
+  const { toast } = useToast();
+  
+  const handleSendUpdate = () => {
+    toast({
+      title: "Update Sent",
+      description: "Hospital has been notified with the latest patient information.",
+    });
+  };
+  
+  const handleUpdateETA = () => {
+    toast({
+      title: "ETA Updated",
+      description: "Estimated arrival time has been updated.",
+    });
+  };
+  
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -17,10 +34,10 @@ const HospitalNotification = () => {
         <div className="space-y-4">
           <div className="flex justify-between items-start">
             <div>
-              <h3 className="font-medium">Seoul National University Hospital</h3>
+              <h3 className="font-medium">AIIMS Delhi</h3>
               <div className="flex items-center text-sm text-gray-500">
                 <Clock className="h-4 w-4 mr-1" />
-                <span>ETA: 12 minutes</span>
+                <span>ETA: 18 minutes</span>
               </div>
             </div>
             <Badge status="Preparing" />
@@ -30,28 +47,28 @@ const HospitalNotification = () => {
             <h3 className="text-sm font-medium mb-2">Resource Preparation:</h3>
             <ul className="space-y-2 text-sm">
               <li className="flex justify-between items-center">
-                <span>Trauma Bay 1</span>
+                <span>Trauma Bay 2</span>
                 <span className="flex items-center text-green-600">
                   <CheckCircle2 className="h-4 w-4 mr-1" />
                   Ready
                 </span>
               </li>
               <li className="flex justify-between items-center">
-                <span>Thoracic Surgeon</span>
+                <span>Orthopedic Surgeon</span>
                 <span className="flex items-center text-green-600">
                   <CheckCircle2 className="h-4 w-4 mr-1" />
                   Notified
                 </span>
               </li>
               <li className="flex justify-between items-center">
-                <span>Chest Tube Tray</span>
+                <span>Plaster Cast Tray</span>
                 <span className="flex items-center text-green-600">
                   <CheckCircle2 className="h-4 w-4 mr-1" />
                   Prepared
                 </span>
               </li>
               <li className="flex justify-between items-center">
-                <span>Blood Products (O-Neg)</span>
+                <span>Blood Products (B+)</span>
                 <span className="flex items-center text-yellow-600">
                   <Clock className="h-4 w-4 mr-1" />
                   In Progress
@@ -61,8 +78,8 @@ const HospitalNotification = () => {
           </div>
           
           <div className="flex space-x-2">
-            <Button variant="outline" className="flex-1 text-sm">Update ETA</Button>
-            <Button className="flex-1 text-sm flex items-center justify-center">
+            <Button variant="outline" className="flex-1 text-sm" onClick={handleUpdateETA}>Update ETA</Button>
+            <Button className="flex-1 text-sm flex items-center justify-center" onClick={handleSendUpdate}>
               <Send className="h-4 w-4 mr-1" />
               Send Update
             </Button>

@@ -25,9 +25,9 @@ const TriageClassification = () => {
             <div className="mt-3 text-sm text-gray-700">
               <div className="font-medium mb-1">AI Triage Reasoning:</div>
               <ul className="list-disc list-inside space-y-1 text-xs">
-                <li>Suspected tension pneumothorax (92% confidence)</li>
-                <li>Abnormal vital signs: tachycardia, hypotension</li>
-                <li>Respiratory distress with decreasing SpO2</li>
+                <li>Open fracture with significant blood loss (94% confidence)</li>
+                <li>Abnormal vital signs: tachycardia, borderline hypotension</li>
+                <li>Risk of hypovolemic shock based on injury pattern</li>
               </ul>
             </div>
           </div>
@@ -39,14 +39,14 @@ const TriageClassification = () => {
             <li className="flex items-start">
               <span className="bg-red-100 text-red-800 font-bold rounded-full h-5 w-5 flex items-center justify-center text-xs mr-2 mt-0.5">1</span>
               <div>
-                <p className="font-medium text-sm">Immediate needle decompression</p>
-                <p className="text-xs text-gray-500">Second intercostal space, midclavicular line</p>
+                <p className="font-medium text-sm">Apply pressure bandage & tourniquet</p>
+                <p className="text-xs text-gray-500">Control active bleeding from compound fracture</p>
               </div>
             </li>
             <li className="flex items-start">
               <span className="bg-red-100 text-red-800 font-bold rounded-full h-5 w-5 flex items-center justify-center text-xs mr-2 mt-0.5">2</span>
               <div>
-                <p className="font-medium text-sm">Oxygen supplementation</p>
+                <p className="font-medium text-sm">Fluid resuscitation</p>
                 <p className="text-xs text-gray-500">Target SpO2 &gt; 94%</p>
               </div>
             </li>
@@ -54,7 +54,7 @@ const TriageClassification = () => {
               <span className="bg-red-100 text-red-800 font-bold rounded-full h-5 w-5 flex items-center justify-center text-xs mr-2 mt-0.5">3</span>
               <div>
                 <p className="font-medium text-sm">Rapid transport to trauma center</p>
-                <p className="text-xs text-gray-500">Consider aeromedical evacuation if available</p>
+                <p className="text-xs text-gray-500">AIIMS Delhi Level 1 Trauma Center</p>
               </div>
             </li>
           </ul>
