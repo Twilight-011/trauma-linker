@@ -1,0 +1,21 @@
+
+/* Custom pulse animation for critical vitals */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Responsive adjustments for small screens */
+@media (max-width: 640px) {
+  .vital-container {
+    grid-template-columns: 1fr;
+  }
+}

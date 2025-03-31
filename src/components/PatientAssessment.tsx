@@ -2,18 +2,32 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Camera, Activity, FileText, AlertTriangle } from 'lucide-react';
+import { Camera, Activity, AlertTriangle } from 'lucide-react';
 
-const VitalSign = ({ name, value, unit, status }: { name: string; value: number; unit: string; status: 'normal' | 'warning' | 'critical' }) => {
+type VitalStatus = 'normal' | 'warning' | 'critical';
+
+interface VitalSignProps {
+  name: string;
+  value: number;
+  unit: string;
+  status: VitalStatus;
+}
+
+const VitalSign = ({ name, value, unit, status }: VitalSignProps) => {
   let statusColor = 'text-green-500';
+  let animationClass = '';
+  
   if (status === 'warning') statusColor = 'text-yellow-500';
-  if (status === 'critical') statusColor = 'text-red-500 pulse';
+  if (status === 'critical') {
+    statusColor = 'text-red-500';
+    animationClass = 'pulse';
+  }
 
   return (
     <div className="flex flex-col">
       <span className="text-gray-500 text-sm">{name}</span>
       <div className="flex items-baseline">
-        <span className={`text-2xl font-bold ${statusColor}`}>{value}</span>
+        <span className={`text-2xl font-bold ${statusColor} ${animationClass}`}>{value}</span>
         <span className="ml-1 text-sm text-gray-500">{unit}</span>
       </div>
     </div>
@@ -61,7 +75,7 @@ const PatientAssessment = () => {
           </div>
 
           <div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 vital-container">
               <VitalSign name="Heart Rate" value={142} unit="bpm" status="critical" />
               <VitalSign name="Blood Pressure" value={90} unit="/60" status="warning" />
               <VitalSign name="SpO2" value={92} unit="%" status="warning" />

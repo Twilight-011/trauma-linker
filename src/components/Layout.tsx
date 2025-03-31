@@ -1,9 +1,13 @@
 
 import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Bell, Clipboard, Heart, Clock, Settings, LogOut } from 'lucide-react';
 
-const Layout = () => {
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-primary text-white px-6 py-3 flex justify-between items-center">
@@ -40,7 +44,7 @@ const Layout = () => {
         </aside>
         
         <main className="flex-1 overflow-auto p-6 bg-gray-50">
-          <Outlet />
+          {children}
         </main>
       </div>
     </div>
