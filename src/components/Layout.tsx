@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Bell, Clipboard, Heart, Clock, Settings, LogOut } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Bell, Clipboard, Heart, Clock, Settings, LogOut, UserPlus } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 interface LayoutProps {
@@ -10,6 +10,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { toast } = useToast();
+  const location = useLocation();
   
   const handleNotificationClick = () => {
     toast({
@@ -45,8 +46,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       
       <div className="flex flex-1">
         <aside className="w-16 bg-gray-100 flex flex-col items-center py-6 space-y-6">
-          <Link to="/" className="p-2 rounded-lg bg-primary/10 text-primary">
+          <Link to="/" className={`p-2 rounded-lg ${location.pathname === '/' ? 'bg-primary/10 text-primary' : 'text-gray-500 hover:bg-gray-200'}`}>
             <Clipboard className="h-6 w-6" />
+          </Link>
+          <Link to="/new-patient" className={`p-2 rounded-lg ${location.pathname === '/new-patient' ? 'bg-primary/10 text-primary' : 'text-gray-500 hover:bg-gray-200'}`}>
+            <UserPlus className="h-6 w-6" />
           </Link>
           <Link to="/" className="p-2 rounded-lg text-gray-500 hover:bg-gray-200">
             <Clock className="h-6 w-6" />

@@ -1,7 +1,9 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
-import { Clock, MapPin, User, CalendarClock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Clock, MapPin, User, CalendarClock, Plus } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 const CurrentCaseInfo = () => {
@@ -16,8 +18,16 @@ const CurrentCaseInfo = () => {
               <span>Started 15:12 (12 min ago)</span>
             </div>
           </div>
-          <div className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
-            Active Case
+          <div className="flex items-center space-x-2">
+            <div className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
+              Active Case
+            </div>
+            <Link to="/new-patient">
+              <Button size="sm" className="flex items-center gap-1">
+                <Plus className="h-4 w-4" />
+                New Patient
+              </Button>
+            </Link>
           </div>
         </div>
 
