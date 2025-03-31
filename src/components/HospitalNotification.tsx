@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { HospitalSquare, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { Building2, Clock, Send, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const HospitalNotification = () => {
@@ -9,7 +9,7 @@ const HospitalNotification = () => {
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="text-lg flex items-center">
-          <HospitalSquare className="h-5 w-5 mr-2 text-primary" />
+          <Building2 className="h-5 w-5 mr-2 text-primary" />
           Hospital Notification
         </CardTitle>
       </CardHeader>

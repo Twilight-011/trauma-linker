@@ -47,7 +47,7 @@ const TriageClassification = () => {
               <span className="bg-red-100 text-red-800 font-bold rounded-full h-5 w-5 flex items-center justify-center text-xs mr-2 mt-0.5">2</span>
               <div>
                 <p className="font-medium text-sm">Oxygen supplementation</p>
-                <p className="text-xs text-gray-500">Target SpO2 > 94%</p>
+                <p className="text-xs text-gray-500">Target SpO2 &gt; 94%</p>
               </div>
             </li>
             <li className="flex items-start">
