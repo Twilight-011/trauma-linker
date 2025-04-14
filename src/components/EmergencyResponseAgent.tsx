@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Bot, Loader2, MapPin, Hospital, AlertTriangle, Heartbeat } from 'lucide-react';
+import { Bot, Loader2, MapPin, Hospital, AlertTriangle, Activity } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
@@ -249,7 +249,7 @@ const EmergencyResponseAgent = () => {
               <div className="border border-gray-200 rounded-lg p-3">
                 <div className="flex justify-between items-center mb-2">
                   <p className="text-sm font-medium flex items-center">
-                    <Heartbeat className="h-4 w-4 mr-1 text-red-500" />
+                    <Activity className="h-4 w-4 mr-1 text-red-500" />
                     Live Location Tracking
                   </p>
                   <span className="text-xs text-green-600 animate-pulse">Active</span>
