@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -29,7 +30,17 @@ const PatientInputForm = () => {
   
   const form = useForm({
     defaultValues: {
-      // Empty default values to ensure the form context is initialized properly
+      gender: '',
+      estimatedAge: '',
+      incidentType: '',
+      incidentDetails: '',
+      location: '',
+      locationDetails: '',
+      responsiveness: 'responsive',
+      breathing: 'normal',
+      bleeding: 'none',
+      injuryLocation: '',
+      physicalFindings: '',
     }
   });
   
@@ -211,6 +222,17 @@ const PatientInputForm = () => {
       
       setTimeout(() => {
         setIsSubmitting(false);
+        
+        // Dispatch custom event to activate the EmergencyResponseAgent
+        const patientDataEvent = new CustomEvent('patientDataSubmitted', {
+          detail: {
+            ...patientData,
+            vitalSigns,
+            images: previewUrls,
+            caseId
+          }
+        });
+        document.dispatchEvent(patientDataEvent);
         
         toast({
           title: 'Assessment Complete',
