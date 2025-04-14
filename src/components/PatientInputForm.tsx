@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -28,7 +27,11 @@ const PatientInputForm = () => {
     gcs: '',
   });
   
-  const form = useForm();
+  const form = useForm({
+    defaultValues: {
+      // Empty default values to ensure the form context is initialized properly
+    }
+  });
   
   const [patientData, setPatientData] = useState({
     gender: '',
@@ -235,178 +238,178 @@ const PatientInputForm = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="gender">Estimated Gender</Label>
-                <select
-                  id="gender"
-                  name="gender"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  value={patientData.gender}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Unknown">Unknown</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="estimatedAge">Estimated Age</Label>
-                <select
-                  id="estimatedAge"
-                  name="estimatedAge"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  value={patientData.estimatedAge}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="">Select Age Range</option>
-                  <option value="Infant (0-1)">Infant (0-1 years)</option>
-                  <option value="Child (2-12)">Child (2-12 years)</option>
-                  <option value="Adolescent (13-17)">Adolescent (13-17 years)</option>
-                  <option value="Young Adult (18-35)">Young Adult (18-35 years)</option>
-                  <option value="Middle-aged (36-55)">Middle-aged (36-55 years)</option>
-                  <option value="Elderly (56+)">Elderly (56+ years)</option>
-                </select>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="incidentType">Incident Type</Label>
-              <select
-                id="incidentType"
-                name="incidentType"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                value={patientData.incidentType}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Select Incident Type</option>
-                <option value="Road Traffic Accident">Road Traffic Accident</option>
-                <option value="Fall">Fall</option>
-                <option value="Burn">Burn</option>
-                <option value="Assault">Assault</option>
-                <option value="Industrial Accident">Industrial Accident</option>
-                <option value="Drowning">Drowning</option>
-                <option value="Medical Emergency">Medical Emergency</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="incidentDetails">Incident Details</Label>
-              <Textarea 
-                id="incidentDetails" 
-                name="incidentDetails" 
-                placeholder="Describe what happened" 
-                rows={2}
-                value={patientData.incidentDetails}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
-                <Input 
-                  id="location" 
-                  name="location" 
-                  placeholder="e.g. NH-8" 
-                  value={patientData.location}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="locationDetails">City/District</Label>
-                <Input 
-                  id="locationDetails" 
-                  name="locationDetails" 
-                  placeholder="e.g. Gurugram, Haryana" 
-                  value={patientData.locationDetails}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-            </div>
-            
-            <div className="p-3 bg-orange-50 rounded-md border border-orange-200">
-              <h3 className="font-medium text-orange-800 mb-2">On-site Patient Assessment</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div className="space-y-1">
-                  <Label htmlFor="responsiveness">Responsiveness</Label>
+        <Form {...form}>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="gender">Estimated Gender</Label>
                   <select
-                    id="responsiveness"
-                    name="responsiveness"
+                    id="gender"
+                    name="gender"
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    value={patientData.responsiveness}
+                    value={patientData.gender}
                     onChange={handleInputChange}
                     required
                   >
-                    <option value="responsive">Alert & Responsive</option>
-                    <option value="semi-responsive">Semi-Responsive</option>
-                    <option value="unresponsive">Unresponsive</option>
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Unknown">Unknown</option>
                   </select>
                 </div>
-                
-                <div className="space-y-1">
-                  <Label htmlFor="breathing">Breathing</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="estimatedAge">Estimated Age</Label>
                   <select
-                    id="breathing"
-                    name="breathing"
+                    id="estimatedAge"
+                    name="estimatedAge"
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    value={patientData.breathing}
+                    value={patientData.estimatedAge}
                     onChange={handleInputChange}
                     required
                   >
-                    <option value="normal">Normal</option>
-                    <option value="labored">Labored</option>
-                    <option value="absent">Absent/Minimal</option>
-                  </select>
-                </div>
-                
-                <div className="space-y-1">
-                  <Label htmlFor="bleeding">Bleeding</Label>
-                  <select
-                    id="bleeding"
-                    name="bleeding"
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    value={patientData.bleeding}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    <option value="none">None</option>
-                    <option value="mild">Mild</option>
-                    <option value="moderate">Moderate</option>
-                    <option value="severe">Severe</option>
+                    <option value="">Select Age Range</option>
+                    <option value="Infant (0-1)">Infant (0-1 years)</option>
+                    <option value="Child (2-12)">Child (2-12 years)</option>
+                    <option value="Adolescent (13-17)">Adolescent (13-17 years)</option>
+                    <option value="Young Adult (18-35)">Young Adult (18-35 years)</option>
+                    <option value="Middle-aged (36-55)">Middle-aged (36-55 years)</option>
+                    <option value="Elderly (56+)">Elderly (56+ years)</option>
                   </select>
                 </div>
               </div>
               
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button type="button" variant="outline" className="w-full mb-3">
-                    <Activity className="mr-2 h-4 w-4" />
-                    Record Vital Signs
-                  </Button>
-                </SheetTrigger>
-                <SheetContent>
-                  <SheetHeader>
-                    <SheetTitle>Patient Vital Signs</SheetTitle>
-                  </SheetHeader>
-                  <div className="py-4 space-y-4">
-                    <FormItem>
+              <div className="space-y-2">
+                <Label htmlFor="incidentType">Incident Type</Label>
+                <select
+                  id="incidentType"
+                  name="incidentType"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  value={patientData.incidentType}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Select Incident Type</option>
+                  <option value="Road Traffic Accident">Road Traffic Accident</option>
+                  <option value="Fall">Fall</option>
+                  <option value="Burn">Burn</option>
+                  <option value="Assault">Assault</option>
+                  <option value="Industrial Accident">Industrial Accident</option>
+                  <option value="Drowning">Drowning</option>
+                  <option value="Medical Emergency">Medical Emergency</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="incidentDetails">Incident Details</Label>
+                <Textarea 
+                  id="incidentDetails" 
+                  name="incidentDetails" 
+                  placeholder="Describe what happened" 
+                  rows={2}
+                  value={patientData.incidentDetails}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="location">Location</Label>
+                  <Input 
+                    id="location" 
+                    name="location" 
+                    placeholder="e.g. NH-8" 
+                    value={patientData.location}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="locationDetails">City/District</Label>
+                  <Input 
+                    id="locationDetails" 
+                    name="locationDetails" 
+                    placeholder="e.g. Gurugram, Haryana" 
+                    value={patientData.locationDetails}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="p-3 bg-orange-50 rounded-md border border-orange-200">
+                <h3 className="font-medium text-orange-800 mb-2">On-site Patient Assessment</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <div className="space-y-1">
+                    <Label htmlFor="responsiveness">Responsiveness</Label>
+                    <select
+                      id="responsiveness"
+                      name="responsiveness"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      value={patientData.responsiveness}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="responsive">Alert & Responsive</option>
+                      <option value="semi-responsive">Semi-Responsive</option>
+                      <option value="unresponsive">Unresponsive</option>
+                    </select>
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <Label htmlFor="breathing">Breathing</Label>
+                    <select
+                      id="breathing"
+                      name="breathing"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      value={patientData.breathing}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="normal">Normal</option>
+                      <option value="labored">Labored</option>
+                      <option value="absent">Absent/Minimal</option>
+                    </select>
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <Label htmlFor="bleeding">Bleeding</Label>
+                    <select
+                      id="bleeding"
+                      name="bleeding"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      value={patientData.bleeding}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="none">None</option>
+                      <option value="mild">Mild</option>
+                      <option value="moderate">Moderate</option>
+                      <option value="severe">Severe</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button type="button" variant="outline" className="w-full mb-3">
+                      <Activity className="mr-2 h-4 w-4" />
+                      Record Vital Signs
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent>
+                    <SheetHeader>
+                      <SheetTitle>Patient Vital Signs</SheetTitle>
+                    </SheetHeader>
+                    <div className="py-4 space-y-4">
                       <div className="flex items-center justify-between">
-                        <FormLabel className="flex items-center">
+                        <div className="flex items-center">
                           <Heart className="h-4 w-4 mr-2 text-red-500" />
-                          Heart Rate (BPM)
-                        </FormLabel>
+                          <span>Heart Rate (BPM)</span>
+                        </div>
                         <Input
                           name="heartRate"
                           type="number"
@@ -416,14 +419,12 @@ const PatientInputForm = () => {
                           onChange={handleVitalSignChange}
                         />
                       </div>
-                    </FormItem>
-                    
-                    <FormItem>
+                      
                       <div className="flex items-center justify-between">
-                        <FormLabel className="flex items-center">
+                        <div className="flex items-center">
                           <Activity className="h-4 w-4 mr-2 text-blue-500" />
-                          Blood Pressure
-                        </FormLabel>
+                          <span>Blood Pressure</span>
+                        </div>
                         <Input
                           name="bloodPressure"
                           placeholder="e.g. 120/80"
@@ -432,14 +433,12 @@ const PatientInputForm = () => {
                           onChange={handleVitalSignChange}
                         />
                       </div>
-                    </FormItem>
-                    
-                    <FormItem>
+                      
                       <div className="flex items-center justify-between">
-                        <FormLabel className="flex items-center">
+                        <div className="flex items-center">
                           <Activity className="h-4 w-4 mr-2 text-purple-500" />
-                          Respiratory Rate
-                        </FormLabel>
+                          <span>Respiratory Rate</span>
+                        </div>
                         <Input
                           name="respRate"
                           type="number"
@@ -449,14 +448,12 @@ const PatientInputForm = () => {
                           onChange={handleVitalSignChange}
                         />
                       </div>
-                    </FormItem>
-                    
-                    <FormItem>
+                      
                       <div className="flex items-center justify-between">
-                        <FormLabel className="flex items-center">
+                        <div className="flex items-center">
                           <Activity className="h-4 w-4 mr-2 text-indigo-500" />
-                          SpO2 (%)
-                        </FormLabel>
+                          <span>SpO2 (%)</span>
+                        </div>
                         <Input
                           name="spO2"
                           type="number"
@@ -466,14 +463,12 @@ const PatientInputForm = () => {
                           onChange={handleVitalSignChange}
                         />
                       </div>
-                    </FormItem>
-                    
-                    <FormItem>
+                      
                       <div className="flex items-center justify-between">
-                        <FormLabel className="flex items-center">
+                        <div className="flex items-center">
                           <Thermometer className="h-4 w-4 mr-2 text-orange-500" />
-                          Temperature (°C)
-                        </FormLabel>
+                          <span>Temperature (°C)</span>
+                        </div>
                         <Input
                           name="temperature"
                           type="number"
@@ -484,14 +479,12 @@ const PatientInputForm = () => {
                           onChange={handleVitalSignChange}
                         />
                       </div>
-                    </FormItem>
-                    
-                    <FormItem>
+                      
                       <div className="flex items-center justify-between">
-                        <FormLabel className="flex items-center">
+                        <div className="flex items-center">
                           <Activity className="h-4 w-4 mr-2 text-gray-500" />
-                          GCS (3-15)
-                        </FormLabel>
+                          <span>GCS (3-15)</span>
+                        </div>
                         <Input
                           name="gcs"
                           type="number"
@@ -503,224 +496,223 @@ const PatientInputForm = () => {
                           onChange={handleVitalSignChange}
                         />
                       </div>
-                    </FormItem>
-                  </div>
-                </SheetContent>
-              </Sheet>
-              
-              <div className="space-y-1">
-                <Label htmlFor="injuryLocation">Injury Location</Label>
-                <select
-                  id="injuryLocation"
-                  name="injuryLocation"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  value={patientData.injuryLocation}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="">Select Primary Injury Location</option>
-                  <option value="Head/Face">Head/Face</option>
-                  <option value="Neck">Neck</option>
-                  <option value="Chest">Chest</option>
-                  <option value="Abdomen">Abdomen</option>
-                  <option value="Back">Back</option>
-                  <option value="Upper Extremities">Upper Extremities</option>
-                  <option value="Lower Extremities">Lower Extremities</option>
-                  <option value="Multiple">Multiple Locations</option>
-                </select>
-              </div>
-              
-              <div className="space-y-1 mt-3">
-                <Label htmlFor="physicalFindings">Physical Examination Findings</Label>
-                <Textarea 
-                  id="physicalFindings" 
-                  name="physicalFindings" 
-                  placeholder="Describe visible injuries, deformities, etc." 
-                  rows={3}
-                  value={patientData.physicalFindings}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label className="block mb-2">Injury Photos (for AI Analysis)</Label>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  className="flex items-center gap-2"
-                  onClick={handleCameraCapture}
-                >
-                  <Camera className="h-4 w-4" />
-                  Capture Photo
-                </Button>
-                <div className="relative">
-                  <Input
-                    id="injuryPhotos"
-                    type="file"
-                    className="hidden"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageUpload}
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="flex items-center gap-2"
-                    onClick={() => document.getElementById('injuryPhotos')?.click()}
+                    </div>
+                  </SheetContent>
+                </Sheet>
+                
+                <div className="space-y-1">
+                  <Label htmlFor="injuryLocation">Injury Location</Label>
+                  <select
+                    id="injuryLocation"
+                    name="injuryLocation"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    value={patientData.injuryLocation}
+                    onChange={handleInputChange}
+                    required
                   >
-                    <Upload className="h-4 w-4" />
-                    Upload Photos
-                  </Button>
+                    <option value="">Select Primary Injury Location</option>
+                    <option value="Head/Face">Head/Face</option>
+                    <option value="Neck">Neck</option>
+                    <option value="Chest">Chest</option>
+                    <option value="Abdomen">Abdomen</option>
+                    <option value="Back">Back</option>
+                    <option value="Upper Extremities">Upper Extremities</option>
+                    <option value="Lower Extremities">Lower Extremities</option>
+                    <option value="Multiple">Multiple Locations</option>
+                  </select>
+                </div>
+                
+                <div className="space-y-1 mt-3">
+                  <Label htmlFor="physicalFindings">Physical Examination Findings</Label>
+                  <Textarea 
+                    id="physicalFindings" 
+                    name="physicalFindings" 
+                    placeholder="Describe visible injuries, deformities, etc." 
+                    rows={3}
+                    value={patientData.physicalFindings}
+                    onChange={handleInputChange}
+                    required
+                  />
                 </div>
               </div>
               
-              {previewUrls.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mt-4">
-                  {previewUrls.map((url, index) => (
-                    <div key={index} className="relative">
-                      <img
-                        src={url}
-                        alt={`Injury ${index + 1}`}
-                        className="w-full h-24 object-cover rounded-md border"
-                      />
-                      <button
-                        type="button"
-                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
-                        onClick={() => removeImage(index)}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                        </svg>
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              {previewUrls.length === 0 && (
-                <div className="border border-dashed border-gray-300 rounded-md p-6 text-center text-gray-500 mt-4">
-                  <p>Upload or capture photos of injuries for AI analysis</p>
-                </div>
-              )}
-            </div>
-            
-            {aiAnalysisProgress > 0 && !showResults && (
               <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <Label>AI Analysis in Progress</Label>
-                  <span className="text-sm">{aiAnalysisProgress}%</span>
-                </div>
-                <Progress value={aiAnalysisProgress} className="h-2" />
-              </div>
-            )}
-            
-            {showResults && (
-              <div className="space-y-4 border border-green-200 bg-green-50 p-4 rounded-md">
-                <h3 className="font-medium text-green-800">AI Analysis Results</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium text-gray-700">Detected Injuries:</h4>
-                    <ul className="text-sm space-y-1 text-gray-600">
-                      <li className="flex justify-between">
-                        <span>Open Fracture - Right Tibia</span>
-                        <span className="font-medium text-red-600">94%</span>
-                      </li>
-                      <li className="flex justify-between">
-                        <span>Traumatic Head Injury</span>
-                        <span className="font-medium text-red-600">89%</span>
-                      </li>
-                      <li className="flex justify-between">
-                        <span>Internal Hemorrhage</span>
-                        <span className="font-medium text-yellow-600">67%</span>
-                      </li>
-                    </ul>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium text-gray-700">Recommended Actions:</h4>
-                    <ul className="text-sm space-y-1 text-gray-600">
-                      <li className="flex items-start gap-1 text-red-700">
-                        <span>●</span>
-                        <span>Immediate hemorrhage control</span>
-                      </li>
-                      <li className="flex items-start gap-1 text-red-700">
-                        <span>●</span>
-                        <span>C-spine immobilization</span>
-                      </li>
-                      <li className="flex items-start gap-1 text-red-700">
-                        <span>●</span>
-                        <span>Apply pressure bandage & tourniquet</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-gray-700">Recommended Facility:</h4>
-                  <div className="bg-white p-3 rounded-md border border-gray-200">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-medium flex items-center">
-                          <Hospital className="h-4 w-4 mr-1 text-red-600" />
-                          AIIMS Delhi
-                        </h3>
-                        <p className="text-xs text-gray-500">Level 1 Trauma Center</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-gray-500">
-                          <Map className="h-3 w-3 inline mr-1" />
-                          4.2 km
-                        </p>
-                        <p className="text-xs font-medium text-green-600">
-                          <Ambulance className="h-3 w-3 inline mr-1" />
-                          ETA: 12 min
-                        </p>
-                      </div>
-                    </div>
-                    <Button size="sm" variant="outline" className="w-full mt-2 text-xs flex items-center justify-center">
-                      <Hospital className="h-3 w-3 mr-1" />
-                      Notify Hospital
-                      <ChevronRight className="h-3 w-3 ml-auto" />
+                <Label className="block mb-2">Injury Photos (for AI Analysis)</Label>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    className="flex items-center gap-2"
+                    onClick={handleCameraCapture}
+                  >
+                    <Camera className="h-4 w-4" />
+                    Capture Photo
+                  </Button>
+                  <div className="relative">
+                    <Input
+                      id="injuryPhotos"
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageUpload}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex items-center gap-2"
+                      onClick={() => document.getElementById('injuryPhotos')?.click()}
+                    >
+                      <Upload className="h-4 w-4" />
+                      Upload Photos
                     </Button>
                   </div>
                 </div>
                 
-                <div className="p-2 bg-red-50 border border-red-200 rounded-lg flex items-start">
-                  <AlertCircle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <div className="text-sm text-red-800">
-                    <p className="font-medium">Critical Alert:</p>
-                    <p>Patient requires immediate transfer to trauma center. Estimated survival probability decreases by 12% for every 10 minute delay in treatment.</p>
+                {previewUrls.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mt-4">
+                    {previewUrls.map((url, index) => (
+                      <div key={index} className="relative">
+                        <img
+                          src={url}
+                          alt={`Injury ${index + 1}`}
+                          className="w-full h-24 object-cover rounded-md border"
+                        />
+                        <button
+                          type="button"
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
+                          onClick={() => removeImage(index)}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {previewUrls.length === 0 && (
+                  <div className="border border-dashed border-gray-300 rounded-md p-6 text-center text-gray-500 mt-4">
+                    <p>Upload or capture photos of injuries for AI analysis</p>
+                  </div>
+                )}
+              </div>
+              
+              {aiAnalysisProgress > 0 && !showResults && (
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <Label>AI Analysis in Progress</Label>
+                    <span className="text-sm">{aiAnalysisProgress}%</span>
+                  </div>
+                  <Progress value={aiAnalysisProgress} className="h-2" />
+                </div>
+              )}
+              
+              {showResults && (
+                <div className="space-y-4 border border-green-200 bg-green-50 p-4 rounded-md">
+                  <h3 className="font-medium text-green-800">AI Analysis Results</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-medium text-gray-700">Detected Injuries:</h4>
+                      <ul className="text-sm space-y-1 text-gray-600">
+                        <li className="flex justify-between">
+                          <span>Open Fracture - Right Tibia</span>
+                          <span className="font-medium text-red-600">94%</span>
+                        </li>
+                        <li className="flex justify-between">
+                          <span>Traumatic Head Injury</span>
+                          <span className="font-medium text-red-600">89%</span>
+                        </li>
+                        <li className="flex justify-between">
+                          <span>Internal Hemorrhage</span>
+                          <span className="font-medium text-yellow-600">67%</span>
+                        </li>
+                      </ul>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-medium text-gray-700">Recommended Actions:</h4>
+                      <ul className="text-sm space-y-1 text-gray-600">
+                        <li className="flex items-start gap-1 text-red-700">
+                          <span>●</span>
+                          <span>Immediate hemorrhage control</span>
+                        </li>
+                        <li className="flex items-start gap-1 text-red-700">
+                          <span>●</span>
+                          <span>C-spine immobilization</span>
+                        </li>
+                        <li className="flex items-start gap-1 text-red-700">
+                          <span>●</span>
+                          <span>Apply pressure bandage & tourniquet</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-gray-700">Recommended Facility:</h4>
+                    <div className="bg-white p-3 rounded-md border border-gray-200">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-medium flex items-center">
+                            <Hospital className="h-4 w-4 mr-1 text-red-600" />
+                            AIIMS Delhi
+                          </h3>
+                          <p className="text-xs text-gray-500">Level 1 Trauma Center</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs text-gray-500">
+                            <Map className="h-3 w-3 inline mr-1" />
+                            4.2 km
+                          </p>
+                          <p className="text-xs font-medium text-green-600">
+                            <Ambulance className="h-3 w-3 inline mr-1" />
+                            ETA: 12 min
+                          </p>
+                        </div>
+                      </div>
+                      <Button size="sm" variant="outline" className="w-full mt-2 text-xs flex items-center justify-center">
+                        <Hospital className="h-3 w-3 mr-1" />
+                        Notify Hospital
+                        <ChevronRight className="h-3 w-3 ml-auto" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="p-2 bg-red-50 border border-red-200 rounded-lg flex items-start">
+                    <AlertCircle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0 mt-0.5" />
+                    <div className="text-sm text-red-800">
+                      <p className="font-medium">Critical Alert:</p>
+                      <p>Patient requires immediate transfer to trauma center. Estimated survival probability decreases by 12% for every 10 minute delay in treatment.</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-            
-            <div className="bg-yellow-50 p-4 rounded-md border border-yellow-200 flex items-start">
-              <AlertCircle className="h-5 w-5 text-yellow-500 mr-2 flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-yellow-800">
-                <p className="font-medium">Important Notice:</p>
-                <p>All patient data must be handled according to hospital privacy policy and regulations. Images should clearly show injuries without unnecessary exposure.</p>
+              )}
+              
+              <div className="bg-yellow-50 p-4 rounded-md border border-yellow-200 flex items-start">
+                <AlertCircle className="h-5 w-5 text-yellow-500 mr-2 flex-shrink-0 mt-0.5" />
+                <div className="text-sm text-yellow-800">
+                  <p className="font-medium">Important Notice:</p>
+                  <p>All patient data must be handled according to hospital privacy policy and regulations. Images should clearly show injuries without unnecessary exposure.</p>
+                </div>
               </div>
             </div>
-          </div>
-          
-          <div className="flex justify-end space-x-2">
-            <Button variant="outline" type="button" onClick={() => navigate('/')}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Processing...' : 'Submit Assessment'}
-            </Button>
-          </div>
-        </form>
+            
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" type="button" onClick={() => navigate('/')}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Processing...' : 'Submit Assessment'}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );
 };
 
 export default PatientInputForm;
-
