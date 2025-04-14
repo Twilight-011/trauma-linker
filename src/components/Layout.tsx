@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Bell, Clipboard, Heart, Clock, Settings, LogOut, UserPlus } from 'lucide-react';
+import { Bell, Clipboard, Heart, Clock, Settings, LogOut, UserPlus, History, User } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 interface LayoutProps {
@@ -52,10 +52,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <Link to="/new-patient" className={`p-2 rounded-lg ${location.pathname === '/new-patient' ? 'bg-primary/10 text-primary' : 'text-gray-500 hover:bg-gray-200'}`}>
             <UserPlus className="h-6 w-6" />
           </Link>
-          <Link to="/" className="p-2 rounded-lg text-gray-500 hover:bg-gray-200">
-            <Clock className="h-6 w-6" />
+          <Link to="/previous-patients" className={`p-2 rounded-lg ${location.pathname === '/previous-patients' ? 'bg-primary/10 text-primary' : 'text-gray-500 hover:bg-gray-200'}`}>
+            <History className="h-6 w-6" />
           </Link>
-          <Link to="/" className="p-2 rounded-lg text-gray-500 hover:bg-gray-200">
+          <Link to="/profile" className={`p-2 rounded-lg ${location.pathname === '/profile' ? 'bg-primary/10 text-primary' : 'text-gray-500 hover:bg-gray-200'}`}>
+            <User className="h-6 w-6" />
+          </Link>
+          <Link to="/settings" className={`p-2 rounded-lg ${location.pathname === '/settings' ? 'bg-primary/10 text-primary' : 'text-gray-500 hover:bg-gray-200'}`}>
             <Settings className="h-6 w-6" />
           </Link>
           <div className="flex-1"></div>
