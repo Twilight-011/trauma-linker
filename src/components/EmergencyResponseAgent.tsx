@@ -1,166 +1,27 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Bot, Loader2, MapPin, Hospital, AlertTriangle, Activity } from 'lucide-react';
+import { Bot, Loader2, MapPin, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-
-interface AgentState {
-  status: 'idle' | 'analyzing' | 'processing' | 'complete' | 'error';
-  message: string;
-  currentAction?: string;
-  progress: number;
-  location?: {
-    latitude: number;
-    longitude: number;
-    accuracy: number;
-    address?: string;
-  };
-  nearestHospital?: {
-    name: string;
-    distance: string;
-    eta: string;
-    notified: boolean;
-    orStatus: string;
-  };
-}
+import LiveLocationTracker from './LiveLocationTracker';
+import HospitalInfo from './HospitalInfo';
+import { useEmergencyAgent } from '@/hooks/useEmergencyAgent';
 
 const EmergencyResponseAgent = () => {
-  const { toast } = useToast();
-  const [agentState, setAgentState] = useState<AgentState>({
-    status: 'idle',
-    message: 'Ready to begin assessment',
-    progress: 0
-  });
-  const [liveLocation, setLiveLocation] = useState<boolean>(false);
+  const { agentState, liveLocation, activateAgent } = useEmergencyAgent();
 
-  // Simulate agent activation when patient data is submitted
   useEffect(() => {
-    // Listen for custom event when patient form is submitted
     const handlePatientDataSubmitted = (event: CustomEvent) => {
       const patientData = event.detail;
       activateAgent(patientData);
     };
 
     document.addEventListener('patientDataSubmitted', handlePatientDataSubmitted as EventListener);
-    
     return () => {
       document.removeEventListener('patientDataSubmitted', handlePatientDataSubmitted as EventListener);
     };
-  }, []);
-
-  // Function to start the agent workflow
-  const activateAgent = (patientData: any) => {
-    // Step 1: Start analyzing
-    setAgentState({
-      status: 'analyzing',
-      message: 'Analyzing patient data and images...',
-      progress: 10
-    });
-    
-    // Simulate getting user's location
-    getCurrentLocation();
-    
-    // Simulate AI analysis of patient data
-    setTimeout(() => {
-      setAgentState(prev => ({
-        ...prev,
-        progress: 30,
-        message: 'Analyzing images using medical AI models...'
-      }));
-      
-      // Simulate finding nearest hospitals
-      setTimeout(() => {
-        setAgentState(prev => ({
-          ...prev,
-          progress: 60,
-          message: 'Locating nearest trauma centers...',
-          location: {
-            latitude: 28.6139,
-            longitude: 77.2090,
-            accuracy: 15,
-            address: 'Ring Road, Delhi'
-          }
-        }));
-        
-        // Simulate notifying hospital
-        setTimeout(() => {
-          const nearestHospital = {
-            name: 'AIIMS Delhi',
-            distance: '4.2 km',
-            eta: '12 min',
-            notified: true,
-            orStatus: 'Preparing'
-          };
-          
-          setAgentState(prev => ({
-            ...prev,
-            progress: 90,
-            message: 'Notifying nearest trauma center...',
-            nearestHospital
-          }));
-          
-          toast({
-            title: 'Hospital Notified',
-            description: `${nearestHospital.name} has been notified about incoming trauma patient`,
-          });
-          
-          // Complete the process
-          setTimeout(() => {
-            setAgentState(prev => ({
-              ...prev,
-              status: 'complete',
-              progress: 100,
-              message: 'Emergency response coordinated',
-              currentAction: 'Monitoring patient status during transport'
-            }));
-            
-            // Enable live location tracking
-            setLiveLocation(true);
-          }, 1500);
-          
-        }, 2000);
-        
-      }, 2000);
-      
-    }, 2000);
-  };
-
-  // Get user's current location
-  const getCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setAgentState(prev => ({
-            ...prev,
-            location: {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              accuracy: position.coords.accuracy,
-            }
-          }));
-          
-          // Here you would reverse geocode to get address
-          // For demo purposes, we're using a placeholder
-        },
-        (error) => {
-          console.error('Error getting location:', error);
-          toast({
-            title: 'Location Error',
-            description: 'Unable to get your current location. Please enable location services.',
-            variant: 'destructive'
-          });
-        }
-      );
-    } else {
-      toast({
-        title: 'Location Not Supported',
-        description: 'Geolocation is not supported by your browser.',
-        variant: 'destructive'
-      });
-    }
-  };
+  }, [activateAgent]);
 
   return (
     <Card className={agentState.status === 'idle' ? 'border-dashed border-gray-300' : ''}>
@@ -216,21 +77,7 @@ const EmergencyResponseAgent = () => {
             )}
             
             {agentState.nearestHospital && (
-              <div className="bg-blue-50 p-3 rounded-lg">
-                <div className="flex items-start gap-2">
-                  <Hospital className="h-4 w-4 text-blue-600 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium">Nearest Trauma Center</p>
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs">{agentState.nearestHospital.name}</p>
-                      <p className="text-xs font-medium">ETA: {agentState.nearestHospital.eta}</p>
-                    </div>
-                    <p className="text-xs text-blue-600 font-medium mt-1">
-                      {agentState.nearestHospital.notified ? 'Hospital notified' : 'Contacting hospital...'}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <HospitalInfo hospital={agentState.nearestHospital} />
             )}
           </div>
         )}
@@ -245,29 +92,7 @@ const EmergencyResponseAgent = () => {
               </AlertDescription>
             </Alert>
             
-            {liveLocation && (
-              <div className="border border-gray-200 rounded-lg p-3">
-                <div className="flex justify-between items-center mb-2">
-                  <p className="text-sm font-medium flex items-center">
-                    <Activity className="h-4 w-4 mr-1 text-red-500" />
-                    Live Location Tracking
-                  </p>
-                  <span className="text-xs text-green-600 animate-pulse">Active</span>
-                </div>
-                <div className="aspect-video bg-gray-100 rounded relative">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <p className="text-sm text-gray-500">Live map would be displayed here</p>
-                    <div className="absolute bottom-4 right-4 bg-white p-2 rounded-full shadow-md">
-                      <MapPin className="h-5 w-5 text-red-500" />
-                    </div>
-                  </div>
-                </div>
-                <div className="flex justify-between mt-2 text-xs text-gray-600">
-                  <span>Current speed: 42 km/h</span>
-                  <span>ETA: 8 min remaining</span>
-                </div>
-              </div>
-            )}
+            {liveLocation && <LiveLocationTracker />}
           </div>
         )}
         
