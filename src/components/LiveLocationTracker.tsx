@@ -36,6 +36,7 @@ const LiveLocationTracker = () => {
     script.async = true;
     
     script.onload = () => {
+      // Now that the script is loaded, we can safely access window.mapboxgl
       const mapboxgl = window.mapboxgl;
       if (!mapboxgl) return;
       
