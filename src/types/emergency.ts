@@ -24,6 +24,19 @@ export interface NearestHospital {
     phone?: string;
     email?: string;
   }[];
+  resources?: {
+    traumaBays: number;
+    operatingRooms: number;
+    icuBeds: number;
+    ventilators: number;
+  };
+  capabilities?: {
+    traumaLevel: string;
+    hasStrokeUnit: boolean;
+    hasBurnUnit: boolean;
+    hasCardiacCath: boolean;
+    hasPediatricsER: boolean;
+  };
 }
 
 export interface AgentState {

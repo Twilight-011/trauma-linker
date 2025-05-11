@@ -1,13 +1,14 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building2, Clock, Send, CheckCircle2, Phone, Mail, MessageSquare } from 'lucide-react';
+import { Building2, Clock, Send, CheckCircle2, Phone, Mail, MessageSquare, Ambulance, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const HospitalNotification = () => {
   const { toast } = useToast();
@@ -15,6 +16,14 @@ const HospitalNotification = () => {
   const [customMessage, setCustomMessage] = useState<string>(
     "Patient with multiple fractures and possible internal bleeding en route. Estimated arrival in 15 minutes. Please prepare trauma bay and orthopedic team."
   );
+  const [preparedResources, setPreparedResources] = useState({
+    traumaBay: true,
+    orthopedicSurgeon: true,
+    plasterCastTray: true,
+    bloodProducts: false
+  });
+  const [preparationStatus, setPreparationStatus] = useState<'Preparing' | 'Ready'>('Preparing');
+  const [messageTemplate, setMessageTemplate] = useState<string>("trauma_orthopedic");
   
   const handleSendUpdate = () => {
     toast({
@@ -28,6 +37,44 @@ const HospitalNotification = () => {
       title: "ETA Updated",
       description: "Estimated arrival time has been updated.",
     });
+  };
+
+  const handleResourceStatusChange = (resource: keyof typeof preparedResources) => {
+    const updated = { ...preparedResources, [resource]: !preparedResources[resource] };
+    setPreparedResources(updated);
+    
+    // Check if all resources are ready
+    if (Object.values(updated).every(status => status)) {
+      setPreparationStatus('Ready');
+      toast({
+        title: "All Resources Ready",
+        description: "Hospital has prepared all necessary resources.",
+      });
+    } else {
+      setPreparationStatus('Preparing');
+    }
+  };
+
+  const handleTemplateChange = (value: string) => {
+    setMessageTemplate(value);
+    
+    // Update message based on template
+    switch(value) {
+      case "trauma_orthopedic":
+        setCustomMessage("Patient with multiple fractures and possible internal bleeding en route. Estimated arrival in 15 minutes. Please prepare trauma bay and orthopedic team.");
+        break;
+      case "cardiac_emergency":
+        setCustomMessage("Cardiac emergency patient en route. Patient experiencing chest pain and arrhythmia. Require cardiac team and cath lab preparation. ETA 15 minutes.");
+        break;
+      case "neurological":
+        setCustomMessage("Neurological emergency. Patient with suspected stroke symptoms. FAST assessment positive. Please prepare CT scan and stroke team. ETA 15 minutes.");
+        break;
+      case "pediatric":
+        setCustomMessage("Pediatric emergency. 8-year-old patient with severe respiratory distress and possible foreign body aspiration. Please prepare pediatric team. ETA 15 minutes.");
+        break;
+      default:
+        setCustomMessage("");
+    }
   };
   
   return (
@@ -48,7 +95,7 @@ const HospitalNotification = () => {
                 <span>ETA: 18 minutes</span>
               </div>
             </div>
-            <Badge status="Preparing" />
+            <Badge status={preparationStatus} />
           </div>
           
           <div className="p-3 bg-gray-100 rounded-lg">
@@ -56,31 +103,60 @@ const HospitalNotification = () => {
             <ul className="space-y-2 text-sm">
               <li className="flex justify-between items-center">
                 <span>Trauma Bay 2</span>
-                <span className="flex items-center text-green-600">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="h-6 p-0 flex items-center text-green-600"
+                  onClick={() => handleResourceStatusChange('traumaBay')}
+                >
                   <CheckCircle2 className="h-4 w-4 mr-1" />
-                  Ready
-                </span>
+                  {preparedResources.traumaBay ? 'Ready' : 'Pending'}
+                </Button>
               </li>
               <li className="flex justify-between items-center">
                 <span>Orthopedic Surgeon</span>
-                <span className="flex items-center text-green-600">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="h-6 p-0 flex items-center text-green-600"
+                  onClick={() => handleResourceStatusChange('orthopedicSurgeon')}
+                >
                   <CheckCircle2 className="h-4 w-4 mr-1" />
-                  Notified
-                </span>
+                  {preparedResources.orthopedicSurgeon ? 'Notified' : 'Pending'}
+                </Button>
               </li>
               <li className="flex justify-between items-center">
                 <span>Plaster Cast Tray</span>
-                <span className="flex items-center text-green-600">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="h-6 p-0 flex items-center text-green-600"
+                  onClick={() => handleResourceStatusChange('plasterCastTray')}
+                >
                   <CheckCircle2 className="h-4 w-4 mr-1" />
-                  Prepared
-                </span>
+                  {preparedResources.plasterCastTray ? 'Prepared' : 'Pending'}
+                </Button>
               </li>
               <li className="flex justify-between items-center">
                 <span>Blood Products (B+)</span>
-                <span className="flex items-center text-yellow-600">
-                  <Clock className="h-4 w-4 mr-1" />
-                  In Progress
-                </span>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className={`h-6 p-0 flex items-center ${preparedResources.bloodProducts ? 'text-green-600' : 'text-yellow-600'}`}
+                  onClick={() => handleResourceStatusChange('bloodProducts')}
+                >
+                  {preparedResources.bloodProducts ? (
+                    <>
+                      <CheckCircle2 className="h-4 w-4 mr-1" />
+                      Ready
+                    </>
+                  ) : (
+                    <>
+                      <Clock className="h-4 w-4 mr-1" />
+                      In Progress
+                    </>
+                  )}
+                </Button>
               </li>
             </ul>
           </div>
@@ -92,6 +168,22 @@ const HospitalNotification = () => {
             </TabsList>
             
             <TabsContent value="notify" className="space-y-4">
+              <div className="mt-4">
+                <h3 className="text-sm font-medium mb-2">Message Template:</h3>
+                <Select defaultValue={messageTemplate} onValueChange={handleTemplateChange}>
+                  <SelectTrigger className="w-full text-sm">
+                    <SelectValue placeholder="Select a template" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="trauma_orthopedic">Trauma - Orthopedic</SelectItem>
+                    <SelectItem value="cardiac_emergency">Cardiac Emergency</SelectItem>
+                    <SelectItem value="neurological">Neurological Emergency</SelectItem>
+                    <SelectItem value="pediatric">Pediatric Emergency</SelectItem>
+                    <SelectItem value="custom">Custom Message</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="mt-4">
                 <h3 className="text-sm font-medium mb-2">Notification Method:</h3>
                 <RadioGroup defaultValue="all" className="flex flex-wrap gap-2" onValueChange={(val) => setSelectedMethod(val as any)}>
@@ -133,10 +225,24 @@ const HospitalNotification = () => {
               </div>
               
               <div className="flex space-x-2">
-                <Button variant="outline" className="flex-1 text-sm" onClick={handleUpdateETA}>Update ETA</Button>
+                <Button variant="outline" className="flex-1 text-sm" onClick={handleUpdateETA}>
+                  <Clock className="h-4 w-4 mr-1" />
+                  Update ETA
+                </Button>
                 <Button className="flex-1 text-sm flex items-center justify-center" onClick={handleSendUpdate}>
                   <Send className="h-4 w-4 mr-1" />
                   Send Update
+                </Button>
+              </div>
+              
+              <div className="flex space-x-2">
+                <Button variant="outline" className="flex-1 text-sm">
+                  <Ambulance className="h-4 w-4 mr-1" />
+                  Request Ambulance Transfer
+                </Button>
+                <Button variant="outline" className="flex-1 text-sm">
+                  <FileText className="h-4 w-4 mr-1" />
+                  Send Patient Report
                 </Button>
               </div>
             </TabsContent>

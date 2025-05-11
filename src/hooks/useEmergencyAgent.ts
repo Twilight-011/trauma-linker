@@ -122,8 +122,64 @@ export const useEmergencyAgent = () => {
                 orStatus: 'Preparing',
                 specialties: ['Trauma Surgery', 'Orthopedics', 'Neurosurgery', 'Vascular Surgery'],
                 bloodBank: ['A-', 'O-', 'B+', 'AB-'],
-                traumaTeam: 'Activated'
+                traumaTeam: 'Activated',
+                address: 'Sri Aurobindo Marg, Ansari Nagar, New Delhi, 110029',
+                phone: '+91-11-2658-7900',
+                email: 'trauma@aiims.edu',
+                contacts: [
+                  {
+                    name: 'Dr. Amit Gupta',
+                    role: 'Trauma Team Lead',
+                    phone: '+91-11-2658-7901',
+                    email: 'trauma.lead@aiims.edu'
+                  },
+                  {
+                    name: 'Dr. Sushma Verma',
+                    role: 'Orthopedic Surgeon',
+                    phone: '+91-11-2658-7902'
+                  },
+                  {
+                    name: 'Nurse Coordinator',
+                    role: 'ER Coordinator',
+                    phone: '+91-11-2658-7905'
+                  }
+                ],
+                resources: {
+                  traumaBays: 4,
+                  operatingRooms: 8,
+                  icuBeds: 12,
+                  ventilators: 15
+                },
+                capabilities: {
+                  traumaLevel: 'Level 1',
+                  hasStrokeUnit: true,
+                  hasBurnUnit: true,
+                  hasCardiacCath: true,
+                  hasPediatricsER: true
+                }
               };
+
+              // Add route suggestions
+              const routeSuggestions = [
+                {
+                  type: 'fastest',
+                  eta: '12 min',
+                  distance: '4.2 km',
+                  trafficLevel: 'moderate'
+                },
+                {
+                  type: 'alternate',
+                  eta: '15 min',
+                  distance: '5.1 km',
+                  trafficLevel: 'low'
+                },
+                {
+                  type: 'emergency',
+                  eta: '8 min',
+                  distance: '4.2 km',
+                  trafficLevel: 'low'
+                }
+              ];
               
               // Update current patient with hospital info
               setCurrentPatient(prev => {
@@ -155,6 +211,7 @@ export const useEmergencyAgent = () => {
                 progress: 85,
                 message: 'Coordinating with trauma center and ambulance services...',
                 nearestHospital,
+                routeSuggestions,
                 accuracy: 83
               }));
               
