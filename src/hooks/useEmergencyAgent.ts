@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from 'react';
-import { AgentState, PatientTrackingInfo } from '@/types/emergency';
+import { AgentState, PatientTrackingInfo, NearestHospital } from '@/types/emergency';
 import { useToast } from '@/hooks/use-toast';
 import { useLocation } from './useLocation';
 
@@ -11,6 +12,15 @@ interface PatientTrackingData {
   addedAt: Date;
   status: 'processing' | 'transferring' | 'hospital' | 'complete';
   hospital?: string;
+  vitalSigns?: {
+    bloodPressure?: string;
+    heartRate?: number;
+    respiratoryRate?: number;
+    oxygenSaturation?: number;
+    temperature?: number;
+    glucoseLevel?: number;
+  };
+  treatmentNotes?: string[];
 }
 
 export const useEmergencyAgent = () => {
@@ -25,6 +35,7 @@ export const useEmergencyAgent = () => {
   const [liveLocation, setLiveLocation] = useState<boolean>(false);
   const [recentPatients, setRecentPatients] = useState<PatientTrackingData[]>([]);
   const [currentPatient, setCurrentPatient] = useState<PatientTrackingData | null>(null);
+  const [nearbyHospitals, setNearbyHospitals] = useState<NearestHospital[]>([]);
 
   // Load saved patients from localStorage on initial render
   useEffect(() => {
@@ -56,7 +67,14 @@ export const useEmergencyAgent = () => {
       age: patientData?.estimatedAge || 'Unknown',
       incidentType: patientData?.incidentType || 'Medical Emergency',
       addedAt: new Date(),
-      status: 'processing'
+      status: 'processing',
+      vitalSigns: {
+        bloodPressure: patientData?.vitalSigns?.bloodPressure || 'Unknown',
+        heartRate: patientData?.vitalSigns?.heartRate || 0,
+        respiratoryRate: patientData?.vitalSigns?.respiratoryRate || 0,
+        oxygenSaturation: patientData?.vitalSigns?.oxygenSaturation || 0,
+        temperature: patientData?.vitalSigns?.temperature || 0,
+      }
     };
     
     // Set as current patient
@@ -112,8 +130,9 @@ export const useEmergencyAgent = () => {
               accuracy: 75
             }));
             
-            setTimeout(() => {
-              const nearestHospital = {
+            // Generate sample nearby hospitals
+            const sampleNearbyHospitals: NearestHospital[] = [
+              {
                 name: 'AIIMS Delhi',
                 distance: '4.2 km',
                 eta: '12 min',
@@ -125,6 +144,16 @@ export const useEmergencyAgent = () => {
                 address: 'Sri Aurobindo Marg, Ansari Nagar, New Delhi, 110029',
                 phone: '+91-11-2658-7900',
                 email: 'trauma@aiims.edu',
+                patientCapacity: {
+                  total: 250,
+                  current: 180,
+                  available: 70
+                },
+                departments: [
+                  { name: 'Emergency', status: 'available', waitTime: '15 min' },
+                  { name: 'Trauma', status: 'available', waitTime: '5 min' },
+                  { name: 'Surgery', status: 'busy', waitTime: '45 min' }
+                ],
                 contacts: [
                   {
                     name: 'Dr. Amit Gupta',
@@ -156,37 +185,123 @@ export const useEmergencyAgent = () => {
                   hasCardiacCath: true,
                   hasPediatricsER: true
                 }
-              };
+              },
+              {
+                name: 'Max Hospital',
+                distance: '6.7 km',
+                eta: '18 min',
+                notified: false,
+                orStatus: 'Preparing',
+                specialties: ['Cardiology', 'General Surgery', 'Pediatrics'],
+                address: 'Press Enclave Road, Saket, New Delhi, 110017',
+                phone: '+91-11-2651-5050',
+                patientCapacity: {
+                  total: 180,
+                  current: 120,
+                  available: 60
+                },
+                departments: [
+                  { name: 'Emergency', status: 'available', waitTime: '10 min' },
+                  { name: 'Cardiology', status: 'available', waitTime: '30 min' },
+                  { name: 'Surgery', status: 'busy', waitTime: '60 min' }
+                ]
+              },
+              {
+                name: 'Apollo Hospitals',
+                distance: '8.3 km',
+                eta: '22 min',
+                notified: false,
+                orStatus: 'Available',
+                specialties: ['Cardiology', 'Neurology', 'Oncology'],
+                address: 'Sarita Vihar, Delhi Mathura Road, New Delhi, 110076',
+                phone: '+91-11-2692-5858'
+              },
+              {
+                name: 'Sir Ganga Ram Hospital',
+                distance: '9.5 km',
+                eta: '25 min',
+                notified: false,
+                orStatus: 'Busy',
+                specialties: ['Gastroenterology', 'Nephrology', 'Urology'],
+                address: 'Sir Ganga Ram Hospital Marg, Old Rajinder Nagar, New Delhi, 110060',
+                phone: '+91-11-2575-7575'
+              }
+            ];
+            
+            // Set nearby hospitals
+            setNearbyHospitals(sampleNearbyHospitals);
+            
+            const nearestHospital = sampleNearbyHospitals[0];
 
-              // Add route suggestions with proper type annotations
-              const routeSuggestions = [
-                {
-                  type: 'fastest' as const,
-                  eta: '12 min',
-                  distance: '4.2 km',
-                  trafficLevel: 'moderate' as const
-                },
-                {
-                  type: 'alternate' as const,
-                  eta: '15 min',
-                  distance: '5.1 km',
-                  trafficLevel: 'low' as const
-                },
-                {
-                  type: 'emergency' as const,
-                  eta: '8 min',
-                  distance: '4.2 km',
-                  trafficLevel: 'low' as const
-                }
-              ];
-              
-              // Update current patient with hospital info
+            // Add route suggestions with proper type annotations
+            const routeSuggestions = [
+              {
+                type: 'fastest' as const,
+                eta: '12 min',
+                distance: '4.2 km',
+                trafficLevel: 'moderate' as const
+              },
+              {
+                type: 'alternate' as const,
+                eta: '15 min',
+                distance: '5.1 km',
+                trafficLevel: 'low' as const
+              },
+              {
+                type: 'emergency' as const,
+                eta: '8 min',
+                distance: '4.2 km',
+                trafficLevel: 'low' as const
+              }
+            ];
+            
+            // Update current patient with hospital info
+            setCurrentPatient(prev => {
+              if (!prev) return null;
+              return {
+                ...prev,
+                hospital: nearestHospital.name,
+                status: 'transferring'
+              };
+            });
+            
+            // Update recent patients list
+            setRecentPatients(prev => {
+              const updatedList = [...prev];
+              const index = updatedList.findIndex(p => p.id === currentPatient?.id);
+              if (index >= 0) {
+                updatedList[index] = {
+                  ...updatedList[index],
+                  hospital: nearestHospital.name,
+                  status: 'transferring'
+                };
+              }
+              return updatedList;
+            });
+            
+            setAgentState(prev => ({
+              ...prev,
+              status: 'processing',
+              progress: 85,
+              message: 'Coordinating with trauma center and ambulance services...',
+              nearestHospital,
+              nearbyHospitals: sampleNearbyHospitals,
+              routeSuggestions,
+              accuracy: 83
+            }));
+            
+            toast({
+              title: 'Hospital Notified',
+              description: `${nearestHospital.name} trauma team has been activated for incoming patient`,
+            });
+            
+            setTimeout(() => {
+              // Update current patient to hospital status
               setCurrentPatient(prev => {
                 if (!prev) return null;
                 return {
                   ...prev,
-                  hospital: nearestHospital.name,
-                  status: 'transferring'
+                  status: 'hospital'
                 };
               });
               
@@ -197,8 +312,7 @@ export const useEmergencyAgent = () => {
                 if (index >= 0) {
                   updatedList[index] = {
                     ...updatedList[index],
-                    hospital: nearestHospital.name,
-                    status: 'transferring'
+                    status: 'hospital'
                   };
                 }
                 return updatedList;
@@ -206,59 +320,19 @@ export const useEmergencyAgent = () => {
               
               setAgentState(prev => ({
                 ...prev,
-                status: 'processing',
-                progress: 85,
-                message: 'Coordinating with trauma center and ambulance services...',
-                nearestHospital,
-                routeSuggestions,
-                accuracy: 83
+                status: 'complete',
+                progress: 100,
+                message: 'Emergency response coordinated successfully',
+                currentAction: 'Monitoring patient status during transport',
+                accuracy: 86
               }));
               
+              setLiveLocation(true);
+              
               toast({
-                title: 'Hospital Notified',
-                description: `${nearestHospital.name} trauma team has been activated for incoming patient`,
+                title: 'OR-2 Prepared',
+                description: 'Surgical team on standby for immediate intervention',
               });
-              
-              setTimeout(() => {
-                // Update current patient to hospital status
-                setCurrentPatient(prev => {
-                  if (!prev) return null;
-                  return {
-                    ...prev,
-                    status: 'hospital'
-                  };
-                });
-                
-                // Update recent patients list
-                setRecentPatients(prev => {
-                  const updatedList = [...prev];
-                  const index = updatedList.findIndex(p => p.id === currentPatient?.id);
-                  if (index >= 0) {
-                    updatedList[index] = {
-                      ...updatedList[index],
-                      status: 'hospital'
-                    };
-                  }
-                  return updatedList;
-                });
-                
-                setAgentState(prev => ({
-                  ...prev,
-                  status: 'complete',
-                  progress: 100,
-                  message: 'Emergency response coordinated successfully',
-                  currentAction: 'Monitoring patient status during transport',
-                  accuracy: 86
-                }));
-                
-                setLiveLocation(true);
-                
-                toast({
-                  title: 'OR-2 Prepared',
-                  description: 'Surgical team on standby for immediate intervention',
-                });
-              }, 1500);
-              
             }, 1500);
             
           }, 1500);
@@ -275,6 +349,7 @@ export const useEmergencyAgent = () => {
     liveLocation, 
     activateAgent, 
     recentPatients, 
-    currentPatient 
+    currentPatient,
+    nearbyHospitals
   };
 };

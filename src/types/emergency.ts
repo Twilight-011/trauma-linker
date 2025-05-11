@@ -6,6 +6,20 @@ export interface Location {
   address?: string;
 }
 
+export interface HospitalFacility {
+  type: string;
+  available: boolean;
+  count?: number;
+  notes?: string;
+}
+
+export interface HospitalDepartment {
+  name: string;
+  status: 'available' | 'busy' | 'unavailable';
+  waitTime?: string;
+  doctors?: number;
+}
+
 export interface NearestHospital {
   name: string;
   distance: string;
@@ -37,6 +51,14 @@ export interface NearestHospital {
     hasCardiacCath: boolean;
     hasPediatricsER: boolean;
   };
+  departments?: HospitalDepartment[];
+  facilities?: HospitalFacility[];
+  patientCapacity?: {
+    total: number;
+    current: number;
+    available: number;
+  };
+  lastUpdated?: Date;
 }
 
 export interface AgentState {
@@ -53,6 +75,7 @@ export interface AgentState {
     distance: string;
     trafficLevel: 'low' | 'moderate' | 'heavy';
   }[];
+  nearbyHospitals?: NearestHospital[];
 }
 
 export interface PatientTrackingInfo {
@@ -64,4 +87,13 @@ export interface PatientTrackingInfo {
   addedAt: Date;
   status: 'processing' | 'transferring' | 'hospital' | 'complete';
   hospital?: string;
+  vitalSigns?: {
+    bloodPressure?: string;
+    heartRate?: number;
+    respiratoryRate?: number;
+    oxygenSaturation?: number;
+    temperature?: number;
+    glucoseLevel?: number;
+  };
+  treatmentNotes?: string[];
 }
