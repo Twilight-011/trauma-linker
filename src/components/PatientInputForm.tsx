@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -81,12 +82,34 @@ const PatientInputForm = () => {
                 >
                   <option value="">Select Incident Type</option>
                   <option value="Road Traffic Accident">Road Traffic Accident</option>
+                  <option value="Road Traffic Accident - Vehicle-Vehicle">Road Traffic Accident - Vehicle-Vehicle</option>
+                  <option value="Road Traffic Accident - Vehicle-Pedestrian">Road Traffic Accident - Vehicle-Pedestrian</option>
+                  <option value="Road Traffic Accident - Vehicle-Cyclist">Road Traffic Accident - Vehicle-Cyclist</option>
                   <option value="Fall">Fall</option>
+                  <option value="Fall - From Height">Fall - From Height</option>
+                  <option value="Fall - Same Level">Fall - Same Level</option>
+                  <option value="Fall - Stairs">Fall - Stairs</option>
                   <option value="Burn">Burn</option>
+                  <option value="Burn - Thermal">Burn - Thermal</option>
+                  <option value="Burn - Chemical">Burn - Chemical</option>
+                  <option value="Burn - Electrical">Burn - Electrical</option>
                   <option value="Assault">Assault</option>
+                  <option value="Assault - Blunt Force">Assault - Blunt Force</option>
+                  <option value="Assault - Sharp Object">Assault - Sharp Object</option>
                   <option value="Industrial Accident">Industrial Accident</option>
+                  <option value="Industrial Accident - Machinery">Industrial Accident - Machinery</option>
+                  <option value="Industrial Accident - Fall">Industrial Accident - Fall</option>
                   <option value="Drowning">Drowning</option>
                   <option value="Medical Emergency">Medical Emergency</option>
+                  <option value="Medical Emergency - Cardiac">Medical Emergency - Cardiac</option>
+                  <option value="Medical Emergency - Respiratory">Medical Emergency - Respiratory</option>
+                  <option value="Medical Emergency - Neurological">Medical Emergency - Neurological</option>
+                  <option value="Medical Emergency - Metabolic">Medical Emergency - Metabolic</option>
+                  <option value="Crush Injury">Crush Injury</option>
+                  <option value="Explosion/Blast Injury">Explosion/Blast Injury</option>
+                  <option value="Poisoning/Intoxication">Poisoning/Intoxication</option>
+                  <option value="Animal Attack">Animal Attack</option>
+                  <option value="Natural Disaster">Natural Disaster</option>
                   <option value="Other">Other</option>
                 </select>
               </div>
@@ -186,12 +209,59 @@ const PatientInputForm = () => {
                   >
                     <option value="">Select Primary Injury Location</option>
                     <option value="Head/Face">Head/Face</option>
+                    <option value="Head - Frontal">Head - Frontal</option>
+                    <option value="Head - Temporal">Head - Temporal</option>
+                    <option value="Head - Parietal">Head - Parietal</option>
+                    <option value="Head - Occipital">Head - Occipital</option>
+                    <option value="Face - Orbital">Face - Orbital/Eye</option>
+                    <option value="Face - Nasal">Face - Nasal</option>
+                    <option value="Face - Maxillary">Face - Maxillary/Cheek</option>
+                    <option value="Face - Mandibular">Face - Mandibular/Jaw</option>
                     <option value="Neck">Neck</option>
+                    <option value="Neck - Anterior">Neck - Anterior</option>
+                    <option value="Neck - Posterior">Neck - Posterior</option>
+                    <option value="Neck - Lateral">Neck - Lateral</option>
                     <option value="Chest">Chest</option>
+                    <option value="Chest - Sternum">Chest - Sternum</option>
+                    <option value="Chest - Right Ribs">Chest - Right Ribs</option>
+                    <option value="Chest - Left Ribs">Chest - Left Ribs</option>
                     <option value="Abdomen">Abdomen</option>
+                    <option value="Abdomen - Right Upper Quadrant">Abdomen - Right Upper Quadrant</option>
+                    <option value="Abdomen - Left Upper Quadrant">Abdomen - Left Upper Quadrant</option>
+                    <option value="Abdomen - Right Lower Quadrant">Abdomen - Right Lower Quadrant</option>
+                    <option value="Abdomen - Left Lower Quadrant">Abdomen - Left Lower Quadrant</option>
                     <option value="Back">Back</option>
+                    <option value="Back - Cervical Spine">Back - Cervical Spine</option>
+                    <option value="Back - Thoracic Spine">Back - Thoracic Spine</option>
+                    <option value="Back - Lumbar Spine">Back - Lumbar Spine</option>
+                    <option value="Back - Sacral Spine">Back - Sacral Spine</option>
+                    <option value="Pelvis">Pelvis</option>
                     <option value="Upper Extremities">Upper Extremities</option>
+                    <option value="Shoulder - Right">Shoulder - Right</option>
+                    <option value="Shoulder - Left">Shoulder - Left</option>
+                    <option value="Upper Arm - Right">Upper Arm - Right</option>
+                    <option value="Upper Arm - Left">Upper Arm - Left</option>
+                    <option value="Elbow - Right">Elbow - Right</option>
+                    <option value="Elbow - Left">Elbow - Left</option>
+                    <option value="Forearm - Right">Forearm - Right</option>
+                    <option value="Forearm - Left">Forearm - Left</option>
+                    <option value="Wrist - Right">Wrist - Right</option>
+                    <option value="Wrist - Left">Wrist - Left</option>
+                    <option value="Hand - Right">Hand - Right</option>
+                    <option value="Hand - Left">Hand - Left</option>
                     <option value="Lower Extremities">Lower Extremities</option>
+                    <option value="Hip - Right">Hip - Right</option>
+                    <option value="Hip - Left">Hip - Left</option>
+                    <option value="Thigh - Right">Thigh - Right</option>
+                    <option value="Thigh - Left">Thigh - Left</option>
+                    <option value="Knee - Right">Knee - Right</option>
+                    <option value="Knee - Left">Knee - Left</option>
+                    <option value="Lower Leg - Right">Lower Leg - Right</option>
+                    <option value="Lower Leg - Left">Lower Leg - Left</option>
+                    <option value="Ankle - Right">Ankle - Right</option>
+                    <option value="Ankle - Left">Ankle - Left</option>
+                    <option value="Foot - Right">Foot - Right</option>
+                    <option value="Foot - Left">Foot - Left</option>
                     <option value="Multiple">Multiple Locations</option>
                   </select>
                 </div>

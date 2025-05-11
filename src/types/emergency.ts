@@ -12,6 +12,9 @@ export interface NearestHospital {
   eta: string;
   notified: boolean;
   orStatus: string;
+  specialties?: string[];
+  bloodBank?: string[];
+  traumaTeam?: string;
 }
 
 export interface AgentState {
@@ -21,4 +24,5 @@ export interface AgentState {
   progress: number;
   location?: Location;
   nearestHospital?: NearestHospital;
+  accuracy?: number;
 }
