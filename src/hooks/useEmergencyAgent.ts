@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import { AgentState } from '@/types/emergency';
+import { AgentState, PatientTrackingInfo } from '@/types/emergency';
 import { useToast } from '@/hooks/use-toast';
 import { useLocation } from './useLocation';
 
@@ -159,25 +158,25 @@ export const useEmergencyAgent = () => {
                 }
               };
 
-              // Add route suggestions
+              // Add route suggestions with proper type annotations
               const routeSuggestions = [
                 {
-                  type: 'fastest',
+                  type: 'fastest' as const,
                   eta: '12 min',
                   distance: '4.2 km',
-                  trafficLevel: 'moderate'
+                  trafficLevel: 'moderate' as const
                 },
                 {
-                  type: 'alternate',
+                  type: 'alternate' as const,
                   eta: '15 min',
                   distance: '5.1 km',
-                  trafficLevel: 'low'
+                  trafficLevel: 'low' as const
                 },
                 {
-                  type: 'emergency',
+                  type: 'emergency' as const,
                   eta: '8 min',
                   distance: '4.2 km',
-                  trafficLevel: 'low'
+                  trafficLevel: 'low' as const
                 }
               ];
               
