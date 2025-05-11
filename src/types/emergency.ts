@@ -15,6 +15,15 @@ export interface NearestHospital {
   specialties?: string[];
   bloodBank?: string[];
   traumaTeam?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  contacts?: {
+    name: string;
+    role: string;
+    phone?: string;
+    email?: string;
+  }[];
 }
 
 export interface AgentState {
@@ -25,6 +34,12 @@ export interface AgentState {
   location?: Location;
   nearestHospital?: NearestHospital;
   accuracy: number;
+  routeSuggestions?: {
+    type: 'fastest' | 'alternate' | 'emergency';
+    eta: string;
+    distance: string;
+    trafficLevel: 'low' | 'moderate' | 'heavy';
+  }[];
 }
 
 export interface PatientTrackingInfo {
