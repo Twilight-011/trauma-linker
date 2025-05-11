@@ -24,5 +24,16 @@ export interface AgentState {
   progress: number;
   location?: Location;
   nearestHospital?: NearestHospital;
-  accuracy?: number;
+  accuracy: number;
+}
+
+export interface PatientTrackingInfo {
+  id: string;
+  gender?: string;
+  age?: string;
+  incidentType?: string;
+  location?: string;
+  addedAt: Date;
+  status: 'processing' | 'transferring' | 'hospital' | 'complete';
+  hospital?: string;
 }
