@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin, Clock, Building2, AlertTriangle, RefreshCw, Map, ListFilter, Route, Pill, Ambulance } from 'lucide-react';
@@ -9,10 +8,11 @@ import { useToast } from '@/hooks/use-toast';
 import { NearestHospital } from '@/types/emergency';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const RealTimeHospitalList = () => {
   const { toast } = useToast();
-  const { currentLocation, getCurrentLocation } = useLocation();
+  const { currentLocation, getCurrentLocation, useFallbackLocation, permissionStatus, isLoading } = useLocation();
   const [loading, setLoading] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [filterBy, setFilterBy] = useState<'distance' | 'available' | 'specialty'>('distance');
@@ -20,7 +20,10 @@ const RealTimeHospitalList = () => {
   
   // Fetch hospitals based on user location
   useEffect(() => {
-    getCurrentLocation();
+    // Initial location check
+    if (!currentLocation) {
+      getCurrentLocation();
+    }
   }, []);
   
   // Fetch hospitals when location changes
@@ -122,7 +125,12 @@ const RealTimeHospitalList = () => {
   };
   
   const handleRefresh = () => {
-    getCurrentLocation();
+    if (currentLocation) {
+      fetchNearbyHospitals(currentLocation);
+    } else {
+      getCurrentLocation();
+    }
+    
     toast({
       title: "Updating Hospital List",
       description: "Getting your current location...",
@@ -163,10 +171,10 @@ const RealTimeHospitalList = () => {
             variant="outline" 
             size="sm" 
             onClick={handleRefresh}
-            disabled={loading}
+            disabled={loading || isLoading}
             className="h-8"
           >
-            {loading ? (
+            {(loading || isLoading) ? (
               <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
             ) : (
               <RefreshCw className="h-4 w-4 mr-1" />
@@ -211,7 +219,47 @@ const RealTimeHospitalList = () => {
           </div>
         </div>
         
-        {loading ? (
+        {!currentLocation && !isLoading && !loading ? (
+          <div className="flex flex-col gap-3 py-4 items-center justify-center">
+            {permissionStatus === 'denied' ? (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Location permission denied</AlertTitle>
+                <AlertDescription>
+                  Please enable location access in your browser settings to see nearby hospitals.
+                </AlertDescription>
+              </Alert>
+            ) : (
+              <div className="flex flex-col items-center text-gray-500">
+                <AlertTriangle className="h-8 w-8 mb-2" />
+                <p>We need your location to find nearby hospitals</p>
+              </div>
+            )}
+            
+            <div className="flex flex-col gap-2 w-full mt-2">
+              <Button 
+                variant="default" 
+                size="sm" 
+                onClick={getCurrentLocation}
+                disabled={isLoading}
+                className="w-full"
+              >
+                <MapPin className="h-4 w-4 mr-1" />
+                {isLoading ? 'Getting location...' : 'Get My Location'}
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={useFallbackLocation}
+                className="w-full"
+              >
+                <MapPin className="h-4 w-4 mr-1" />
+                Use Test Location
+              </Button>
+            </div>
+          </div>
+        ) : loading || isLoading ? (
           <div className="flex flex-col items-center justify-center py-8 text-gray-500">
             <RefreshCw className="h-8 w-8 animate-spin mb-2" />
             <p>Finding nearby hospitals...</p>
@@ -238,8 +286,8 @@ const RealTimeHospitalList = () => {
               onClick={handleRefresh}
               className="mt-2"
             >
-              <MapPin className="h-4 w-4 mr-1" />
-              Get Your Location
+              <RefreshCw className="h-4 w-4 mr-1" />
+              Refresh List
             </Button>
           </div>
         )}

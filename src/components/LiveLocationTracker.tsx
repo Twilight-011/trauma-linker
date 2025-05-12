@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Activity, MapPin, Navigation, Clock, AlertCircle, Route, Ambulance } from 'lucide-react';
 import { useEmergencyAgent } from '@/hooks/useEmergencyAgent';
@@ -7,11 +6,12 @@ import { Badge } from '@/components/ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useToast } from '@/hooks/use-toast';
 import { useLocation } from '@/hooks/useLocation';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const LiveLocationTracker = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { agentState } = useEmergencyAgent();
-  const { currentLocation, getCurrentLocation } = useLocation();
+  const { currentLocation, getCurrentLocation, useFallbackLocation, permissionStatus, isLoading } = useLocation();
   const [mapKey, setMapKey] = useState<string>('');
   const [routeType, setRouteType] = useState<'fastest' | 'alternate' | 'emergency'>('fastest');
   const [trafficInfo, setTrafficInfo] = useState<{ level: string; delay: string } | null>(null);
@@ -29,8 +29,8 @@ const LiveLocationTracker = () => {
     }
   }, []);
 
+  // Simulate traffic API data
   useEffect(() => {
-    // Simulate traffic API data
     const trafficLevels = ['moderate', 'heavy', 'light'];
     const delays = ['5 min', '12 min', '2 min'];
     
@@ -269,6 +269,19 @@ const LiveLocationTracker = () => {
         <span className="text-xs text-green-600 animate-pulse">Active</span>
       </div>
       
+      {!currentLocation && (
+        <Alert variant="warning" className="mb-3">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Location access needed</AlertTitle>
+          <AlertDescription>
+            We need your location to show nearby hospitals and routes.
+            {permissionStatus === 'denied' && (
+              <p className="text-xs mt-1">You've denied location access. Please enable it in your browser settings.</p>
+            )}
+          </AlertDescription>
+        </Alert>
+      )}
+      
       {!mapKey ? (
         <div className="p-4 border border-dashed border-gray-300 rounded-lg">
           <p className="text-sm text-gray-500 mb-2">Please enter your Mapbox API key to display the map</p>
@@ -285,110 +298,146 @@ const LiveLocationTracker = () => {
         </div>
       ) : (
         <>
+          {!currentLocation && !isLoading ? (
+            <div className="flex flex-col gap-2 mb-3">
+              <Button 
+                onClick={getCurrentLocation} 
+                variant="default" 
+                className="w-full"
+                disabled={isLoading}
+              >
+                <MapPin className="mr-2 h-4 w-4" />
+                {isLoading ? 'Getting location...' : 'Get My Location'}
+              </Button>
+              <Button 
+                onClick={useFallbackLocation}
+                variant="outline" 
+                className="w-full"
+              >
+                <Navigation className="mr-2 h-4 w-4" />
+                Use Test Location
+              </Button>
+            </div>
+          ) : null}
+          
           <div className="aspect-video bg-gray-100 rounded relative mb-2" ref={mapRef}>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-sm text-gray-500">Loading map...</p>
-            </div>
-          </div>
-          
-          <div className="flex justify-between mb-2">
-            <span className="text-xs">Route type:</span>
-            <div className="flex space-x-1">
-              <Badge 
-                variant={routeType === 'fastest' ? 'default' : 'outline'}
-                className="text-xs cursor-pointer"
-                onClick={() => handleRouteChange('fastest')}
-              >
-                Fastest
-              </Badge>
-              <Badge 
-                variant={routeType === 'alternate' ? 'default' : 'outline'}
-                className="text-xs cursor-pointer"
-                onClick={() => handleRouteChange('alternate')}
-              >
-                Alternate
-              </Badge>
-              <Badge 
-                variant={routeType === 'emergency' ? 'default' : 'outline'}
-                className="text-xs cursor-pointer bg-red-100 text-red-800 border-red-200 hover:bg-red-200"
-                onClick={() => handleRouteChange('emergency')}
-              >
-                Emergency
-              </Badge>
-            </div>
-          </div>
-          
-          <div className="flex justify-between text-xs text-gray-600">
-            <span>Current speed: 42 km/h</span>
-            <span>ETA: {routeType === 'emergency' ? '6' : routeType === 'alternate' ? '12' : '8'} min remaining</span>
-          </div>
-          
-          {trafficInfo && (
-            <div className="mt-2 bg-gray-50 p-2 rounded text-xs flex justify-between items-center">
-              <div className="flex items-center">
-                <AlertCircle className="h-3 w-3 mr-1 text-amber-500" />
-                <span>Traffic: <span className="font-medium">{trafficInfo.level}</span></span>
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-80">
+                <div className="flex flex-col items-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-2"></div>
+                  <p className="text-sm text-gray-500">Getting your location...</p>
+                </div>
               </div>
-              <div className="flex items-center">
-                <Clock className="h-3 w-3 mr-1 text-gray-500" />
-                <span>+{trafficInfo.delay} delay</span>
+            )}
+            {!currentLocation && !isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <p className="text-sm text-gray-500">Location needed to display map</p>
               </div>
-            </div>
-          )}
-          
-          {routeType === 'emergency' && (
-            <div className="mt-2 text-xs bg-red-50 text-red-800 p-2 rounded-md flex items-center">
-              <Navigation className="h-3 w-3 mr-1" />
-              <span>Emergency corridors activated for fastest route</span>
-            </div>
-          )}
-          
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <Button variant="outline" size="sm" className="text-xs w-full" onClick={handleCheckRoadClosures}>
-              <Route className="h-3 w-3 mr-1" />
-              Check Road Closures
-            </Button>
-            
-            <Button 
-              variant={ambulanceRequested ? "outline" : "default"} 
-              size="sm" 
-              className={`text-xs w-full ${ambulanceRequested ? "bg-green-50 text-green-700 border-green-200" : "bg-red-600 hover:bg-red-700"}`}
-              onClick={handleRequestAmbulance}
-              disabled={ambulanceRequested}
-            >
-              <Ambulance className="h-3 w-3 mr-1" />
-              {ambulanceRequested ? "Ambulance Dispatched" : "Request Ambulance"}
-            </Button>
+            )}
           </div>
           
-          <div className="mt-2">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="text-xs w-full">
-                  Alternative Hospitals
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-60 p-2">
-                <div className="text-xs space-y-2">
-                  <div className="font-medium">Other Nearby Facilities:</div>
-                  <div className="space-y-2">
-                    <div className="p-1.5 border border-gray-100 rounded hover:bg-gray-50 cursor-pointer">
-                      <div className="font-medium">Max Hospital</div>
-                      <div className="text-gray-500">6.7 km • 18 min</div>
-                    </div>
-                    <div className="p-1.5 border border-gray-100 rounded hover:bg-gray-50 cursor-pointer">
-                      <div className="font-medium">Apollo Hospitals</div>
-                      <div className="text-gray-500">8.3 km • 22 min</div>
-                    </div>
-                    <div className="p-1.5 border border-gray-100 rounded hover:bg-gray-50 cursor-pointer">
-                      <div className="font-medium">Sir Ganga Ram Hospital</div>
-                      <div className="text-gray-500">9.5 km • 25 min</div>
-                    </div>
+          {currentLocation && (
+            <>
+              <div className="flex justify-between mb-2">
+                <span className="text-xs">Route type:</span>
+                <div className="flex space-x-1">
+                  <Badge 
+                    variant={routeType === 'fastest' ? 'default' : 'outline'}
+                    className="text-xs cursor-pointer"
+                    onClick={() => handleRouteChange('fastest')}
+                  >
+                    Fastest
+                  </Badge>
+                  <Badge 
+                    variant={routeType === 'alternate' ? 'default' : 'outline'}
+                    className="text-xs cursor-pointer"
+                    onClick={() => handleRouteChange('alternate')}
+                  >
+                    Alternate
+                  </Badge>
+                  <Badge 
+                    variant={routeType === 'emergency' ? 'default' : 'outline'}
+                    className="text-xs cursor-pointer bg-red-100 text-red-800 border-red-200 hover:bg-red-200"
+                    onClick={() => handleRouteChange('emergency')}
+                  >
+                    Emergency
+                  </Badge>
+                </div>
+              </div>
+              
+              <div className="flex justify-between text-xs text-gray-600">
+                <span>Current speed: 42 km/h</span>
+                <span>ETA: {routeType === 'emergency' ? '6' : routeType === 'alternate' ? '12' : '8'} min remaining</span>
+              </div>
+              
+              {trafficInfo && (
+                <div className="mt-2 bg-gray-50 p-2 rounded text-xs flex justify-between items-center">
+                  <div className="flex items-center">
+                    <AlertCircle className="h-3 w-3 mr-1 text-amber-500" />
+                    <span>Traffic: <span className="font-medium">{trafficInfo.level}</span></span>
+                  </div>
+                  <div className="flex items-center">
+                    <Clock className="h-3 w-3 mr-1 text-gray-500" />
+                    <span>+{trafficInfo.delay} delay</span>
                   </div>
                 </div>
-              </PopoverContent>
-            </Popover>
-          </div>
+              )}
+              
+              {routeType === 'emergency' && (
+                <div className="mt-2 text-xs bg-red-50 text-red-800 p-2 rounded-md flex items-center">
+                  <Navigation className="h-3 w-3 mr-1" />
+                  <span>Emergency corridors activated for fastest route</span>
+                </div>
+              )}
+              
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <Button variant="outline" size="sm" className="text-xs w-full" onClick={handleCheckRoadClosures}>
+                  <Route className="h-3 w-3 mr-1" />
+                  Check Road Closures
+                </Button>
+                
+                <Button 
+                  variant={ambulanceRequested ? "outline" : "default"} 
+                  size="sm" 
+                  className={`text-xs w-full ${ambulanceRequested ? "bg-green-50 text-green-700 border-green-200" : "bg-red-600 hover:bg-red-700"}`}
+                  onClick={handleRequestAmbulance}
+                  disabled={ambulanceRequested}
+                >
+                  <Ambulance className="h-3 w-3 mr-1" />
+                  {ambulanceRequested ? "Ambulance Dispatched" : "Request Ambulance"}
+                </Button>
+              </div>
+              
+              <div className="mt-2">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className="text-xs w-full">
+                      Alternative Hospitals
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-60 p-2">
+                    <div className="text-xs space-y-2">
+                      <div className="font-medium">Other Nearby Facilities:</div>
+                      <div className="space-y-2">
+                        <div className="p-1.5 border border-gray-100 rounded hover:bg-gray-50 cursor-pointer">
+                          <div className="font-medium">Max Hospital</div>
+                          <div className="text-gray-500">6.7 km • 18 min</div>
+                        </div>
+                        <div className="p-1.5 border border-gray-100 rounded hover:bg-gray-50 cursor-pointer">
+                          <div className="font-medium">Apollo Hospitals</div>
+                          <div className="text-gray-500">8.3 km • 22 min</div>
+                        </div>
+                        <div className="p-1.5 border border-gray-100 rounded hover:bg-gray-50 cursor-pointer">
+                          <div className="font-medium">Sir Ganga Ram Hospital</div>
+                          <div className="text-gray-500">9.5 km • 25 min</div>
+                        </div>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </>
+          )}
         </>
       )}
     </div>
