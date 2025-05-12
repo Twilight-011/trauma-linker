@@ -1,13 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MapPin, Clock, Building2, AlertTriangle, RefreshCw, Map, ListFilter } from 'lucide-react';
+import { MapPin, Clock, Building2, AlertTriangle, RefreshCw, Map, ListFilter, Route, Pill, Ambulance } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useLocation } from '@/hooks/useLocation';
 import { useToast } from '@/hooks/use-toast';
 import { NearestHospital } from '@/types/emergency';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 const RealTimeHospitalList = () => {
   const { toast } = useToast();
@@ -18,6 +19,11 @@ const RealTimeHospitalList = () => {
   const [hospitals, setHospitals] = useState<NearestHospital[]>([]);
   
   // Fetch hospitals based on user location
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
+  
+  // Fetch hospitals when location changes
   useEffect(() => {
     if (currentLocation) {
       fetchNearbyHospitals(currentLocation);
@@ -248,11 +254,38 @@ interface HospitalItemProps {
 
 const HospitalItem = ({ hospital }: HospitalItemProps) => {
   const { toast } = useToast();
+  const [medicationDialogOpen, setMedicationDialogOpen] = useState(false);
   
   const handleNotify = () => {
     toast({
       title: "Hospital Notified",
       description: `${hospital.name} has been notified about the incoming patient.`,
+    });
+  };
+  
+  const handleAmbulanceRequest = () => {
+    toast({
+      title: "Ambulance Requested",
+      description: `Emergency service contacted. Ambulance dispatched from ${hospital.name}.`,
+    });
+    
+    // After 2 seconds, show confirmation
+    setTimeout(() => {
+      toast({
+        title: "Ambulance Confirmed",
+        description: "ETA: 8 minutes. Patient report sent to hospital.",
+      });
+    }, 2000);
+  };
+  
+  const handleShowMedications = () => {
+    setMedicationDialogOpen(true);
+  };
+  
+  const handleShowDirections = () => {
+    toast({
+      title: "Directions",
+      description: `Showing route to ${hospital.name}`,
     });
   };
   
@@ -328,22 +361,77 @@ const HospitalItem = ({ hospital }: HospitalItemProps) => {
         </div>
       )}
       
-      <div className="mt-3 flex items-center justify-between gap-2">
-        <Button variant="outline" size="sm" className="text-xs h-7 flex-1">
-          <MapPin className="h-3 w-3 mr-1" />
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        <Button variant="outline" size="sm" className="text-xs h-7" onClick={handleShowDirections}>
+          <Route className="h-3 w-3 mr-1" />
           Directions
         </Button>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="text-xs h-7 flex-1"
-          onClick={handleNotify}
-        >
-          <AlertTriangle className="h-3 w-3 mr-1" />
-          Notify
-        </Button>
-        <Button variant="default" size="sm" className="text-xs h-7 flex-1">
-          View Details
+        
+        <Dialog open={medicationDialogOpen} onOpenChange={setMedicationDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm" className="text-xs h-7" onClick={handleShowMedications}>
+              <Pill className="h-3 w-3 mr-1" />
+              Medications
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Available Medications</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3">
+              <div className="text-sm">
+                <h4 className="font-medium mb-1">Emergency Medications</h4>
+                <div className="space-y-1">
+                  {["Epinephrine", "Atropine", "Amiodarone", "Dopamine", "Lidocaine"].map((med, i) => (
+                    <div key={i} className="flex justify-between p-1.5 rounded bg-gray-50">
+                      <span>{med}</span>
+                      <Badge variant="outline" className="bg-green-50 text-green-700">In Stock</Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="text-sm">
+                <h4 className="font-medium mb-1">Trauma Medications</h4>
+                <div className="space-y-1">
+                  {["Tranexamic Acid", "Ketamine", "Fentanyl", "Norepinephrine", "Morphine"].map((med, i) => (
+                    <div key={i} className="flex justify-between p-1.5 rounded bg-gray-50">
+                      <span>{med}</span>
+                      <Badge variant="outline" className="bg-green-50 text-green-700">In Stock</Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="text-sm">
+                <h4 className="font-medium mb-1">Blood Products</h4>
+                <div className="space-y-1">
+                  {[
+                    { name: "Type O- Whole Blood", status: "Limited" },
+                    { name: "Type A+ Whole Blood", status: "Available" },
+                    { name: "Fresh Frozen Plasma", status: "Available" },
+                    { name: "Platelets", status: "Limited" }
+                  ].map((item, i) => (
+                    <div key={i} className="flex justify-between p-1.5 rounded bg-gray-50">
+                      <span>{item.name}</span>
+                      <Badge variant="outline" className={
+                        item.status === "Available" 
+                          ? "bg-green-50 text-green-700" 
+                          : "bg-amber-50 text-amber-700"
+                      }>
+                        {item.status}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+        
+        <Button variant="default" size="sm" className="text-xs h-7 bg-red-600 hover:bg-red-700" onClick={handleAmbulanceRequest}>
+          <Ambulance className="h-3 w-3 mr-1" />
+          Ambulance
         </Button>
       </div>
     </div>

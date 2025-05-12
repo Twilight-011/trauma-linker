@@ -1,12 +1,14 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, AlertCircle, Clock, PlusCircle, History, RefreshCw } from 'lucide-react';
+import { FileText, AlertCircle, Clock, PlusCircle, History, RefreshCw, Pill } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 const MedicalHistory = () => {
-  const [lastUpdated, setLastUpdated] = React.useState<Date>(new Date());
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+  const [medicationDialogOpen, setMedicationDialogOpen] = useState(false);
   
   const handleRefresh = () => {
     // In a real app, this would fetch latest medical records
@@ -48,7 +50,78 @@ const MedicalHistory = () => {
           </div>
           
           <div>
-            <h3 className="text-sm font-medium text-gray-500 mb-2">Medications</h3>
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-sm font-medium text-gray-500">Medications</h3>
+              <Dialog open={medicationDialogOpen} onOpenChange={setMedicationDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-7 text-xs">
+                    <Pill className="h-3 w-3 mr-1" /> Manage Medications
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Manage Medications</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-sm font-medium mb-2">Current Medications</h3>
+                      <div className="space-y-2">
+                        {[
+                          { name: "Metformin", dosage: "500mg twice daily", critical: false },
+                          { name: "Telmisartan", dosage: "40mg daily", critical: true },
+                          { name: "Aspirin", dosage: "75mg daily", critical: true },
+                          { name: "Atorvastatin", dosage: "20mg daily", critical: false }
+                        ].map((med, i) => (
+                          <div key={i} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                            <div>
+                              <div className="font-medium">{med.name}</div>
+                              <div className="text-xs text-gray-500">{med.dosage}</div>
+                            </div>
+                            <div className="flex gap-2">
+                              {med.critical && (
+                                <Badge variant="outline" className="bg-amber-50 text-amber-700">
+                                  Critical
+                                </Badge>
+                              )}
+                              <Button variant="ghost" size="sm" className="h-7 text-xs">
+                                Adjust
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium mb-2">Medication History</h3>
+                      <div className="space-y-2 text-xs">
+                        <div className="p-2 bg-gray-50 rounded">
+                          <div className="flex justify-between">
+                            <span className="font-medium">Amoxicillin</span>
+                            <span className="text-gray-500">Ended Apr 8, 2025</span>
+                          </div>
+                          <p className="text-gray-600 mt-0.5">
+                            500mg three times daily (10 day course)
+                          </p>
+                        </div>
+                        <div className="p-2 bg-gray-50 rounded">
+                          <div className="flex justify-between">
+                            <span className="font-medium">Prednisone</span>
+                            <span className="text-gray-500">Ended Jan 15, 2025</span>
+                          </div>
+                          <p className="text-gray-600 mt-0.5">
+                            Taper course for inflammation (2 weeks)
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <Button className="w-full">
+                      <PlusCircle className="h-4 w-4 mr-2" />
+                      Add New Medication
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
             <ul className="text-sm space-y-1">
               <li className="flex justify-between">
                 <span>Metformin</span>
@@ -63,7 +136,7 @@ const MedicalHistory = () => {
                 <span className="text-gray-500">75mg daily</span>
               </li>
             </ul>
-            <Button variant="ghost" size="sm" className="w-full mt-2 text-xs h-7">
+            <Button variant="ghost" size="sm" className="w-full mt-2 text-xs h-7" onClick={() => setMedicationDialogOpen(true)}>
               <PlusCircle className="h-3 w-3 mr-1" />
               Add Medication
             </Button>

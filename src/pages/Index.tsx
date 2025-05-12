@@ -8,6 +8,8 @@ import HospitalNotification from '@/components/HospitalNotification';
 import CurrentCaseInfo from '@/components/CurrentCaseInfo';
 import CaseSummary from '@/components/CaseSummary';
 import RealTimeHospitalList from '@/components/RealTimeHospitalList';
+import LiveLocationTracker from '@/components/LiveLocationTracker';
+import EmergencyResponseAgent from '@/components/EmergencyResponseAgent';
 
 const Index = () => {
   return (
@@ -27,7 +29,14 @@ const Index = () => {
           </div>
         </div>
         
-        <RealTimeHospitalList />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <RealTimeHospitalList />
+          <div className="space-y-6">
+            <LiveLocationTracker />
+            <EmergencyResponseAgent />
+          </div>
+        </div>
+        
         <CaseSummary />
       </div>
     </Layout>

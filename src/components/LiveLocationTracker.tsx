@@ -1,21 +1,27 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Activity, MapPin, Navigation, Clock, AlertCircle } from 'lucide-react';
+import { Activity, MapPin, Navigation, Clock, AlertCircle, Route, Ambulance } from 'lucide-react';
 import { useEmergencyAgent } from '@/hooks/useEmergencyAgent';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useToast } from '@/hooks/use-toast';
+import { useLocation } from '@/hooks/useLocation';
 
 const LiveLocationTracker = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { agentState } = useEmergencyAgent();
+  const { currentLocation, getCurrentLocation } = useLocation();
   const [mapKey, setMapKey] = useState<string>('');
   const [routeType, setRouteType] = useState<'fastest' | 'alternate' | 'emergency'>('fastest');
   const [trafficInfo, setTrafficInfo] = useState<{ level: string; delay: string } | null>(null);
+  const [ambulanceRequested, setAmbulanceRequested] = useState(false);
   const { toast } = useToast();
   
   useEffect(() => {
+    // Check if we have location permission
+    getCurrentLocation();
+    
     // In a real implementation, this would use a properly stored API key
     const storedKey = localStorage.getItem('mapbox_key');
     if (storedKey) {
@@ -60,6 +66,23 @@ const LiveLocationTracker = () => {
       title: "Road Closures Checked",
       description: "No road closures or construction detected on your route."
     });
+  };
+
+  const handleRequestAmbulance = () => {
+    setAmbulanceRequested(true);
+    
+    toast({
+      title: "Ambulance Requested",
+      description: "Emergency services contacted. Dispatching nearest ambulance."
+    });
+    
+    // After 2 seconds, show confirmation
+    setTimeout(() => {
+      toast({
+        title: "Ambulance Confirmed",
+        description: "ETA: 8 minutes. Patient report automatically sent to receiving hospital."
+      });
+    }, 2000);
   };
 
   useEffect(() => {
@@ -320,11 +343,25 @@ const LiveLocationTracker = () => {
             </div>
           )}
           
-          <div className="mt-2 flex space-x-2">
+          <div className="mt-3 grid grid-cols-2 gap-2">
             <Button variant="outline" size="sm" className="text-xs w-full" onClick={handleCheckRoadClosures}>
+              <Route className="h-3 w-3 mr-1" />
               Check Road Closures
             </Button>
             
+            <Button 
+              variant={ambulanceRequested ? "outline" : "default"} 
+              size="sm" 
+              className={`text-xs w-full ${ambulanceRequested ? "bg-green-50 text-green-700 border-green-200" : "bg-red-600 hover:bg-red-700"}`}
+              onClick={handleRequestAmbulance}
+              disabled={ambulanceRequested}
+            >
+              <Ambulance className="h-3 w-3 mr-1" />
+              {ambulanceRequested ? "Ambulance Dispatched" : "Request Ambulance"}
+            </Button>
+          </div>
+          
+          <div className="mt-2">
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" size="sm" className="text-xs w-full">
