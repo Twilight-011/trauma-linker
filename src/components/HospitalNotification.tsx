@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building2, Clock, Send, CheckCircle2, Phone, Mail, MessageSquare, Ambulance, FileText } from 'lucide-react';
+import { Building2, Clock, Send, CheckCircle2, Phone, Mail, MessageSquare, Ambulance, FileText, RefreshCw, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -24,7 +24,47 @@ const HospitalNotification = () => {
   });
   const [preparationStatus, setPreparationStatus] = useState<'Preparing' | 'Ready'>('Preparing');
   const [messageTemplate, setMessageTemplate] = useState<string>("trauma_orthopedic");
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+  const [eta, setEta] = useState("18");
   
+  // Simulate real-time updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Simulate getting updates from hospital
+      const randomUpdate = Math.random();
+      if (randomUpdate > 0.7 && !preparedResources.bloodProducts) {
+        setPreparedResources(prev => ({...prev, bloodProducts: true}));
+        setPreparationStatus('Ready');
+        toast({
+          title: "Resource Update",
+          description: "Blood products are now ready at AIIMS Delhi.",
+        });
+      }
+      
+      // Occasionally update ETA
+      if (randomUpdate < 0.3) {
+        const newEta = Math.max(parseInt(eta) - 1, 12).toString();
+        setEta(newEta);
+        toast({
+          title: "ETA Update",
+          description: `Estimated arrival time updated to ${newEta} minutes.`,
+        });
+      }
+      
+      setLastUpdated(new Date());
+    }, 15000); // Update every 15 seconds
+    
+    return () => clearInterval(interval);
+  }, [eta, preparedResources.bloodProducts]);
+  
+  const handleRefresh = () => {
+    setLastUpdated(new Date());
+    toast({
+      title: "Status Refreshed",
+      description: "Latest updates retrieved from hospital.",
+    });
+  };
+
   const handleSendUpdate = () => {
     toast({
       title: "Update Sent",
@@ -33,9 +73,11 @@ const HospitalNotification = () => {
   };
   
   const handleUpdateETA = () => {
+    const newEta = (parseInt(eta) + Math.floor(Math.random() * 5) - 2).toString();
+    setEta(newEta);
     toast({
       title: "ETA Updated",
-      description: "Estimated arrival time has been updated.",
+      description: `Estimated arrival time has been updated to ${newEta} minutes.`,
     });
   };
 
@@ -80,10 +122,24 @@ const HospitalNotification = () => {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg flex items-center">
-          <Building2 className="h-5 w-5 mr-2 text-primary" />
-          Hospital Notification
-        </CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-lg flex items-center">
+            <Building2 className="h-5 w-5 mr-2 text-primary" />
+            Hospital Notification
+          </CardTitle>
+          <Button variant="ghost" size="sm" onClick={handleRefresh} className="h-8 w-8 p-0">
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+        </div>
+        <div className="flex justify-between items-center text-xs text-gray-500">
+          <div className="flex items-center">
+            <Clock className="h-3 w-3 mr-1" />
+            Last updated: {lastUpdated.toLocaleTimeString()}
+          </div>
+          <div className="flex items-center">
+            <Badge status="Real-time" />
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -92,14 +148,21 @@ const HospitalNotification = () => {
               <h3 className="font-medium">AIIMS Delhi</h3>
               <div className="flex items-center text-sm text-gray-500">
                 <Clock className="h-4 w-4 mr-1" />
-                <span>ETA: 18 minutes</span>
+                <span>ETA: {eta} minutes</span>
+              </div>
+              <div className="flex items-center text-xs text-gray-500 mt-0.5">
+                <MapPin className="h-3 w-3 mr-1" />
+                <span>4.2 km via Ring Road</span>
               </div>
             </div>
             <Badge status={preparationStatus} />
           </div>
           
           <div className="p-3 bg-gray-100 rounded-lg">
-            <h3 className="text-sm font-medium mb-2">Resource Preparation:</h3>
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-sm font-medium">Resource Preparation:</h3>
+              <span className="text-xs text-gray-500">{preparationStatus === 'Ready' ? '100%' : '75%'} complete</span>
+            </div>
             <ul className="space-y-2 text-sm">
               <li className="flex justify-between items-center">
                 <span>Trauma Bay 2</span>
@@ -222,6 +285,9 @@ const HospitalNotification = () => {
                   onChange={(e) => setCustomMessage(e.target.value)}
                   className="h-20 text-sm"
                 />
+                <div className="text-xs text-right mt-1 text-gray-500">
+                  Include current ETA: {eta} minutes
+                </div>
               </div>
               
               <div className="flex space-x-2">
@@ -249,34 +315,68 @@ const HospitalNotification = () => {
             
             <TabsContent value="contacts" className="space-y-2">
               <div className="space-y-3 text-sm">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
                   <div className="flex items-center">
                     <Phone className="h-4 w-4 mr-2 text-primary" />
                     <span>Emergency Desk</span>
                   </div>
-                  <span>+91-11-2658-7900</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500">+91-11-2658-7900</span>
+                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                      <Phone className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
                 </div>
                 
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
                   <div className="flex items-center">
                     <Phone className="h-4 w-4 mr-2 text-primary" />
                     <span>Trauma Center</span>
                   </div>
-                  <span>+91-11-2673-1164</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500">+91-11-2673-1164</span>
+                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                      <Phone className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
                 </div>
                 
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
                   <div className="flex items-center">
                     <Mail className="h-4 w-4 mr-2 text-primary" />
                     <span>Emergency Email</span>
                   </div>
-                  <span>trauma@aiims.edu</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500">trauma@aiims.edu</span>
+                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                      <Mail className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
                 </div>
                 
-                <Button variant="outline" size="sm" className="w-full mt-2">
-                  <Phone className="h-4 w-4 mr-1" />
-                  Call Hospital Directly
-                </Button>
+                <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                  <div className="flex items-center">
+                    <MessageSquare className="h-4 w-4 mr-2 text-primary" />
+                    <span>SMS Contact</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500">+91-11-2658-7999</span>
+                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                      <MessageSquare className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="mt-3 flex items-center justify-between gap-2">
+                  <Button variant="outline" size="sm" className="w-full text-xs h-7">
+                    <Phone className="h-3 w-3 mr-1" />
+                    Call Hospital
+                  </Button>
+                  <Button variant="outline" size="sm" className="w-full text-xs h-7">
+                    <MessageSquare className="h-3 w-3 mr-1" />
+                    Send SMS
+                  </Button>
+                </div>
               </div>
             </TabsContent>
           </Tabs>
@@ -295,6 +395,9 @@ const Badge = ({ status }: { status: string }) => {
       break;
     case "Ready":
       colors = "bg-green-100 text-green-800 border-green-200";
+      break;
+    case "Real-time":
+      colors = "bg-blue-100 text-blue-800 border-blue-200";
       break;
     default:
       colors = "bg-gray-100 text-gray-800 border-gray-200";

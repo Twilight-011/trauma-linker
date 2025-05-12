@@ -7,6 +7,7 @@ import TriageClassification from '@/components/TriageClassification';
 import HospitalNotification from '@/components/HospitalNotification';
 import CurrentCaseInfo from '@/components/CurrentCaseInfo';
 import CaseSummary from '@/components/CaseSummary';
+import RealTimeHospitalList from '@/components/RealTimeHospitalList';
 
 const Index = () => {
   return (
@@ -26,6 +27,7 @@ const Index = () => {
           </div>
         </div>
         
+        <RealTimeHospitalList />
         <CaseSummary />
       </div>
     </Layout>

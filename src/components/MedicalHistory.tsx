@@ -1,17 +1,35 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, AlertCircle } from 'lucide-react';
+import { FileText, AlertCircle, Clock, PlusCircle, History, RefreshCw } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 const MedicalHistory = () => {
+  const [lastUpdated, setLastUpdated] = React.useState<Date>(new Date());
+  
+  const handleRefresh = () => {
+    // In a real app, this would fetch latest medical records
+    setLastUpdated(new Date());
+  };
+  
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg flex items-center">
-          <FileText className="h-5 w-5 mr-2 text-primary" />
-          Medical History
-        </CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-lg flex items-center">
+            <FileText className="h-5 w-5 mr-2 text-primary" />
+            Medical History
+          </CardTitle>
+          <Button variant="ghost" size="sm" onClick={handleRefresh} className="h-8 w-8 p-0">
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+        </div>
+        <div className="text-xs text-gray-500 flex items-center">
+          <Clock className="h-3 w-3 mr-1" />
+          Last updated: {lastUpdated.toLocaleTimeString()}
+          <Badge variant="outline" className="ml-2 text-xs">Real-time</Badge>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -45,6 +63,10 @@ const MedicalHistory = () => {
                 <span className="text-gray-500">75mg daily</span>
               </li>
             </ul>
+            <Button variant="ghost" size="sm" className="w-full mt-2 text-xs h-7">
+              <PlusCircle className="h-3 w-3 mr-1" />
+              Add Medication
+            </Button>
           </div>
           
           <div>
@@ -62,6 +84,32 @@ const MedicalHistory = () => {
               <p className="font-medium">Medication Interaction Alert:</p>
               <p>Potential interaction between Aspirin and emergency trauma protocols. Consider alternative blood thinning management.</p>
             </div>
+          </div>
+          
+          <div className="text-sm">
+            <div className="flex justify-between items-center">
+              <h3 className="font-medium text-gray-500">Previous Hospital Visits</h3>
+              <Button variant="ghost" size="sm" className="h-6 p-0">
+                <History className="h-3 w-3 mr-1" />
+                View All
+              </Button>
+            </div>
+            <ul className="mt-1 space-y-2">
+              <li className="text-xs p-2 bg-gray-50 rounded-md">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">AIIMS Delhi</span>
+                  <span className="text-gray-500">Mar 15, 2025</span>
+                </div>
+                <p className="text-gray-600 mt-0.5">Diabetic follow-up, HbA1c: 7.2%</p>
+              </li>
+              <li className="text-xs p-2 bg-gray-50 rounded-md">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">Max Hospital</span>
+                  <span className="text-gray-500">Jan 03, 2025</span>
+                </div>
+                <p className="text-gray-600 mt-0.5">Respiratory infection, prescribed antibiotics</p>
+              </li>
+            </ul>
           </div>
         </div>
       </CardContent>
