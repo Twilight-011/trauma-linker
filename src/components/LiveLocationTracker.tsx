@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { Activity, MapPin, Navigation, Clock, AlertCircle, Route, Ambulance } from 'lucide-react';
 import { useEmergencyAgent } from '@/hooks/useEmergencyAgent';
@@ -270,7 +271,7 @@ const LiveLocationTracker = () => {
       </div>
       
       {!currentLocation && (
-        <Alert variant="warning" className="mb-3">
+        <Alert variant="destructive" className="mb-3">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Location access needed</AlertTitle>
           <AlertDescription>
