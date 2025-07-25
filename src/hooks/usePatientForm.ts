@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { useEnhancedAI } from './useEnhancedAI';
 
 interface VitalSigns {
   heartRate: string;
@@ -30,9 +31,11 @@ interface PatientData {
 export const usePatientForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { analyzePatientData, isAnalyzing, analysisProgress } = useEnhancedAI();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showResults, setShowResults] = useState(false);
-  const [aiAnalysisProgress, setAiAnalysisProgress] = useState(0);
+  const [analysisData, setAnalysisData] = useState<any>(null);
+  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [vitalSigns, setVitalSigns] = useState<VitalSigns>({
     heartRate: '',
     bloodPressure: '',
@@ -58,20 +61,10 @@ export const usePatientForm = () => {
     }
   });
 
-  const simulateAiAnalysis = () => {
-    setShowResults(false);
-    setAiAnalysisProgress(0);
-    
-    const interval = setInterval(() => {
-      setAiAnalysisProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setShowResults(true);
-          return 100;
-        }
-        return prev + 5;
-      });
-    }, 100);
+  const handleImageUpload = (files: FileList | null) => {
+    if (files && files.length > 0) {
+      setUploadedImage(files[0]);
+    }
   };
 
   const handleVitalSignChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,54 +77,53 @@ export const usePatientForm = () => {
 
   const handleSubmit = async (data: PatientData) => {
     setIsSubmitting(true);
+    setShowResults(false);
     
     try {
-      toast({
-        title: 'Processing Assessment',
-        description: 'Analyzing patient data and images using AI...',
-      });
-      
-      simulateAiAnalysis();
+      // Run enhanced AI analysis
+      const aiResults = await analyzePatientData(uploadedImage, vitalSigns, data);
+      setAnalysisData(aiResults);
+      setShowResults(true);
       
       const caseId = `TR-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
       
-      setTimeout(() => {
-        setIsSubmitting(false);
-        
-        // Dispatch custom event to activate the EmergencyResponseAgent
-        const patientDataEvent = new CustomEvent('patientDataSubmitted', {
-          detail: {
-            ...data,
-            vitalSigns,
-            caseId
-          }
-        });
-        document.dispatchEvent(patientDataEvent);
-        
-        toast({
-          title: 'Assessment Complete',
-          description: `Case ID: ${caseId}`,
-        });
-      }, 3000);
+      // Dispatch custom event to activate the EmergencyResponseAgent
+      const patientDataEvent = new CustomEvent('patientDataSubmitted', {
+        detail: {
+          ...data,
+          vitalSigns,
+          aiAnalysis: aiResults,
+          caseId
+        }
+      });
+      document.dispatchEvent(patientDataEvent);
+      
+      toast({
+        title: 'Enhanced AI Analysis Complete',
+        description: `Case ID: ${caseId} - Confidence: ${aiResults.overallConfidence}%`,
+      });
       
     } catch (error) {
       console.error('Error submitting form:', error);
       toast({
-        title: 'Submission Error',
-        description: 'Failed to process patient data. Please try again.',
+        title: 'Analysis Error',
+        description: 'Failed to complete AI analysis. Please try again.',
         variant: 'destructive'
       });
+    } finally {
       setIsSubmitting(false);
     }
   };
 
   return {
     form,
-    isSubmitting,
+    isSubmitting: isSubmitting || isAnalyzing,
     showResults,
-    aiAnalysisProgress,
+    aiAnalysisProgress: analysisProgress,
+    analysisData,
     vitalSigns,
     handleVitalSignChange,
+    handleImageUpload,
     handleSubmit,
     navigate
   };

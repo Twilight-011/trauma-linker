@@ -13,15 +13,17 @@ import AiAnalysisResults from './patient/AiAnalysisResults';
 import { usePatientForm } from '@/hooks/usePatientForm';
 
 const PatientInputForm = () => {
-  const {
-    form,
-    isSubmitting,
-    showResults,
+  const { 
+    form, 
+    isSubmitting, 
+    showResults, 
     aiAnalysisProgress,
-    vitalSigns,
+    analysisData,
+    vitalSigns, 
     handleVitalSignChange,
+    handleImageUpload,
     handleSubmit,
-    navigate
+    navigate 
   } = usePatientForm();
   
   const [images, setImages] = useState<FileList | null>(null);
@@ -278,11 +280,15 @@ const PatientInputForm = () => {
                 </div>
               </div>
               
-              <ImageUpload onImagesChange={setImages} />
+              <ImageUpload 
+                onImagesChange={handleImageUpload} 
+                onDemoImageSelect={(url) => console.log('Demo image selected:', url)}
+              />
               
-              <AiAnalysisResults
-                progress={aiAnalysisProgress}
+              <AiAnalysisResults 
+                progress={aiAnalysisProgress} 
                 showResults={showResults}
+                analysisData={analysisData}
               />
               
               <div className="bg-yellow-50 p-4 rounded-md border border-yellow-200 flex items-start">

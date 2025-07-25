@@ -5,12 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Camera, Upload } from 'lucide-react';
+import DemoImageSelector from './DemoImageSelector';
 
 interface ImageUploadProps {
   onImagesChange: (files: FileList | null) => void;
+  onDemoImageSelect?: (imageUrl: string) => void;
 }
 
-const ImageUpload = ({ onImagesChange }: ImageUploadProps) => {
+const ImageUpload = ({ onImagesChange, onDemoImageSelect }: ImageUploadProps) => {
   const { toast } = useToast();
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
@@ -122,68 +124,85 @@ const ImageUpload = ({ onImagesChange }: ImageUploadProps) => {
     }
   };
 
+  const handleDemoImageSelect = (imageUrl: string, imageFile: File) => {
+    // Create a FileList with the demo image
+    const dt = new DataTransfer();
+    dt.items.add(imageFile);
+    onImagesChange(dt.files);
+    
+    // Create preview URL
+    setPreviewUrls([imageUrl]);
+    
+    // Callback for additional demo handling if needed
+    onDemoImageSelect?.(imageUrl);
+  };
+
   return (
-    <div className="space-y-2">
-      <Label className="block mb-2">Injury Photos (for AI Analysis)</Label>
-      <div className="flex flex-wrap gap-2 mb-4">
-        <Button 
-          type="button" 
-          variant="outline" 
-          className="flex items-center gap-2"
-          onClick={handleCameraCapture}
-        >
-          <Camera className="h-4 w-4" />
-          Capture Photo
-        </Button>
-        <div className="relative">
-          <Input
-            id="injuryPhotos"
-            type="file"
-            className="hidden"
-            accept="image/*"
-            multiple
-            onChange={handleImageUpload}
-          />
-          <Button
-            type="button"
-            variant="outline"
+    <div className="space-y-4">
+      <DemoImageSelector onImageSelect={handleDemoImageSelect} />
+      
+      <div className="space-y-2">
+        <Label className="block mb-2">Upload Your Own Images (for AI Analysis)</Label>
+        <div className="flex flex-wrap gap-2 mb-4">
+          <Button 
+            type="button" 
+            variant="outline" 
             className="flex items-center gap-2"
-            onClick={() => document.getElementById('injuryPhotos')?.click()}
+            onClick={handleCameraCapture}
           >
-            <Upload className="h-4 w-4" />
-            Upload Photos
+            <Camera className="h-4 w-4" />
+            Capture Photo
           </Button>
+          <div className="relative">
+            <Input
+              id="injuryPhotos"
+              type="file"
+              className="hidden"
+              accept="image/*"
+              multiple
+              onChange={handleImageUpload}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              className="flex items-center gap-2"
+              onClick={() => document.getElementById('injuryPhotos')?.click()}
+            >
+              <Upload className="h-4 w-4" />
+              Upload Photos
+            </Button>
+          </div>
         </div>
+        
+        {previewUrls.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mt-4">
+            {previewUrls.map((url, index) => (
+              <div key={index} className="relative">
+                <img
+                  src={url}
+                  alt={`Injury ${index + 1}`}
+                  className="w-full h-24 object-cover rounded-md border"
+                />
+                <button
+                  type="button"
+                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
+                  onClick={() => removeImage(index)}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        
+        {previewUrls.length === 0 && (
+          <div className="border border-dashed border-gray-300 rounded-md p-6 text-center text-gray-500 mt-4">
+            <p>Upload or capture photos of injuries for AI analysis</p>
+          </div>
+        )}
       </div>
-      
-      {previewUrls.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mt-4">
-          {previewUrls.map((url, index) => (
-            <div key={index} className="relative">
-              <img
-                src={url}
-                alt={`Injury ${index + 1}`}
-                className="w-full h-24 object-cover rounded-md border"
-              />
-              <button
-                type="button"
-                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
-                onClick={() => removeImage(index)}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-      
-      {previewUrls.length === 0 && (
-        <div className="border border-dashed border-gray-300 rounded-md p-6 text-center text-gray-500 mt-4">
-          <p>Upload or capture photos of injuries for AI analysis</p>
-        </div>
-      )}
     </div>
   );
 };
