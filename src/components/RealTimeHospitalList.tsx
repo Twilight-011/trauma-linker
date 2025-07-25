@@ -4,7 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin, Clock, Building2, AlertTriangle, RefreshCw, Map, ListFilter, Route, Pill, Ambulance, AlertCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useLocation } from '@/hooks/useLocation';
+import { useRealLocationAPI } from '@/hooks/useRealLocationAPI';
+import { useRealHospitalAPI } from '@/hooks/useRealHospitalAPI';
+import { useCommunicationAPI } from '@/hooks/useCommunicationAPI';
 import { useToast } from '@/hooks/use-toast';
 import { NearestHospital } from '@/types/emergency';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -13,11 +15,10 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const RealTimeHospitalList = () => {
   const { toast } = useToast();
-  const { currentLocation, getCurrentLocation, useFallbackLocation, permissionStatus, isLoading } = useLocation();
-  const [loading, setLoading] = useState(false);
-  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const { currentLocation, address, getCurrentLocation, useFallbackLocation, permissionStatus, isLoading } = useRealLocationAPI();
+  const { hospitals, loading, lastUpdate, fetchNearbyHospitals } = useRealHospitalAPI();
+  const { notifyHospital, sendSMS } = useCommunicationAPI();
   const [filterBy, setFilterBy] = useState<'distance' | 'available' | 'specialty'>('distance');
-  const [hospitals, setHospitals] = useState<NearestHospital[]>([]);
   
   // Fetch hospitals based on user location
   useEffect(() => {
@@ -34,130 +35,17 @@ const RealTimeHospitalList = () => {
     }
   }, [currentLocation]);
   
-  const fetchNearbyHospitals = (location: any) => {
-    setLoading(true);
-    
-    // Simulate API call with sample data - in real app would use actual APIs
-    setTimeout(() => {
-      const sampleHospitals: NearestHospital[] = [
-        {
-          name: 'AIIMS Delhi',
-          distance: '4.2 km',
-          eta: '12 min',
-          notified: false,
-          orStatus: 'Available',
-          specialties: ['Trauma', 'Orthopedics', 'Neurosurgery'],
-          address: 'Sri Aurobindo Marg, Ansari Nagar, New Delhi',
-          phone: '+91-11-2658-7900',
-          patientCapacity: {
-            total: 250,
-            current: 180,
-            available: 70
-          },
-          departments: [
-            { name: 'Emergency', status: 'available', waitTime: '15 min' }
-          ]
-        },
-        {
-          name: 'Max Hospital',
-          distance: '6.1 km',
-          eta: '18 min',
-          notified: false,
-          orStatus: 'Busy',
-          specialties: ['Cardiology', 'General Surgery'],
-          address: 'Press Enclave Road, Saket, New Delhi',
-          phone: '+91-11-2651-5050',
-          patientCapacity: {
-            total: 180,
-            current: 150,
-            available: 30
-          },
-          departments: [
-            { name: 'Emergency', status: 'busy', waitTime: '35 min' }
-          ]
-        },
-        {
-          name: 'Apollo Hospital',
-          distance: '8.3 km',
-          eta: '22 min',
-          notified: false,
-          orStatus: 'Available',
-          specialties: ['Cardiology', 'Neurology', 'Pediatrics'],
-          address: 'Sarita Vihar, Delhi Mathura Road, New Delhi',
-          phone: '+91-11-2692-5858',
-          patientCapacity: {
-            total: 200,
-            current: 120,
-            available: 80
-          },
-          departments: [
-            { name: 'Emergency', status: 'available', waitTime: '10 min' }
-          ]
-        },
-        {
-          name: 'Fortis Hospital',
-          distance: '9.7 km',
-          eta: '24 min',
-          notified: false,
-          orStatus: 'Limited',
-          specialties: ['Cardiology', 'Orthopedics'],
-          address: 'Okhla road, Sukhdev Vihar, New Delhi',
-          phone: '+91-11-4277-6222',
-          patientCapacity: {
-            total: 150,
-            current: 110,
-            available: 40
-          },
-          departments: [
-            { name: 'Emergency', status: 'busy', waitTime: '30 min' }
-          ]
-        }
-      ];
-      
-      setHospitals(sampleHospitals);
-      setLastUpdate(new Date());
-      setLoading(false);
-      
-      toast({
-        title: "Hospital List Updated",
-        description: `Found ${sampleHospitals.length} hospitals near your location`,
-      });
-    }, 1500);
-  };
-  
   const handleRefresh = () => {
     if (currentLocation) {
       fetchNearbyHospitals(currentLocation);
     } else {
       getCurrentLocation();
     }
-    
-    toast({
-      title: "Updating Hospital List",
-      description: "Getting your current location...",
-    });
   };
   
   const handleFilterChange = (value: string) => {
     setFilterBy(value as 'distance' | 'available' | 'specialty');
-    
-    // Apply sorting based on filter
-    const sortedHospitals = [...hospitals];
-    if (value === 'distance') {
-      sortedHospitals.sort((a, b) => 
-        parseFloat(a.distance.replace(' km', '')) - parseFloat(b.distance.replace(' km', ''))
-      );
-    } else if (value === 'available') {
-      sortedHospitals.sort((a, b) => 
-        (b.patientCapacity?.available || 0) - (a.patientCapacity?.available || 0)
-      );
-    } else if (value === 'specialty') {
-      sortedHospitals.sort((a, b) => 
-        (b.specialties?.length || 0) - (a.specialties?.length || 0)
-      );
-    }
-    
-    setHospitals(sortedHospitals);
+    // Note: Filtering is now handled in the hospital API hook
   };
   
   return (
@@ -198,7 +86,7 @@ const RealTimeHospitalList = () => {
           <div className="flex items-center gap-1.5">
             <MapPin className="h-4 w-4 text-gray-500" />
             <span className="text-sm">
-              {currentLocation ? 'Near current location' : 'Location needed'}
+              {currentLocation ? (address || 'Near current location') : 'Location needed'}
             </span>
           </div>
           
@@ -269,7 +157,17 @@ const RealTimeHospitalList = () => {
         ) : hospitals.length > 0 ? (
           <div className="space-y-3">
             {hospitals.map((hospital, index) => (
-              <HospitalItem key={index} hospital={hospital} />
+              <HospitalItem 
+                key={index} 
+                hospital={hospital} 
+                onNotify={(hospitalData) => notifyHospital(hospitalData.phone || '', {
+                  age: 25,
+                  gender: 'Unknown',
+                  condition: 'Emergency',
+                  triage: 'Unknown',
+                  caseId: 'TR-' + Date.now()
+                }, hospitalData.eta)}
+              />
             ))}
             
             <Button variant="outline" className="w-full text-sm">
@@ -299,16 +197,18 @@ const RealTimeHospitalList = () => {
 
 interface HospitalItemProps {
   hospital: NearestHospital;
+  onNotify?: (hospital: NearestHospital) => void;
 }
 
-const HospitalItem = ({ hospital }: HospitalItemProps) => {
+const HospitalItem = ({ hospital, onNotify }: HospitalItemProps) => {
   const { toast } = useToast();
   const [medicationDialogOpen, setMedicationDialogOpen] = useState(false);
   
   const handleNotify = () => {
+    onNotify?.(hospital);
     toast({
       title: "Hospital Notified",
-      description: `${hospital.name} has been notified about the incoming patient.`,
+      description: `${hospital.name} has been notified about the incoming patient via SMS and call.`,
     });
   };
   
