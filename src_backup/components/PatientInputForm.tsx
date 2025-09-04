@@ -287,8 +287,8 @@ const PatientInputForm = () => {
               
               <AiAnalysisResults 
                 progress={aiAnalysisProgress} 
+                showResults={showResults}
                 analysisData={analysisData}
-                isAnalyzing={aiAnalysisProgress > 0 && aiAnalysisProgress < 100}
               />
               
               <div className="bg-yellow-50 p-4 rounded-md border border-yellow-200 flex items-start">
