@@ -7,9 +7,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Clipboard, AlertCircle } from 'lucide-react';
 import { Form } from '@/components/ui/form';
-import ImageUpload from './patient/ImageUpload';
-import VitalSigns from './patient/VitalSigns';
-import AiAnalysisResults from './patient/AiAnalysisResults';
+import ImageUpload from '@/components/patient/ImageUpload';
+import VitalSigns from '@/components/patient/VitalSigns';
+import AiAnalysisResults from '@/components/patient/AiAnalysisResults';
 import { usePatientForm } from '@/hooks/usePatientForm';
 
 const PatientInputForm = () => {
