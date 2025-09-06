@@ -14,7 +14,132 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      emergency_cases: {
+        Row: {
+          assigned_at: string | null
+          completed_at: string | null
+          hospital_id: string | null
+          id: string
+          patient_id: string | null
+          priority_level: string | null
+          status: string | null
+        }
+        Insert: {
+          assigned_at?: string | null
+          completed_at?: string | null
+          hospital_id?: string | null
+          id?: string
+          patient_id?: string | null
+          priority_level?: string | null
+          status?: string | null
+        }
+        Update: {
+          assigned_at?: string | null
+          completed_at?: string | null
+          hospital_id?: string | null
+          id?: string
+          patient_id?: string | null
+          priority_level?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emergency_cases_hospital_id_fkey"
+            columns: ["hospital_id"]
+            isOneToOne: false
+            referencedRelation: "hospitals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emergency_cases_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hospitals: {
+        Row: {
+          address: string | null
+          capacity: Json | null
+          created_at: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          name: string
+          phone: string | null
+          specialties: string[] | null
+        }
+        Insert: {
+          address?: string | null
+          capacity?: Json | null
+          created_at?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          phone?: string | null
+          specialties?: string[] | null
+        }
+        Update: {
+          address?: string | null
+          capacity?: Json | null
+          created_at?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          phone?: string | null
+          specialties?: string[] | null
+        }
+        Relationships: []
+      }
+      patients: {
+        Row: {
+          age: number | null
+          ai_analysis: Json | null
+          case_id: string
+          created_at: string | null
+          description: string | null
+          gender: string | null
+          id: string
+          incident_type: string | null
+          location: string | null
+          triage_level: string | null
+          updated_at: string | null
+          vital_signs: Json | null
+        }
+        Insert: {
+          age?: number | null
+          ai_analysis?: Json | null
+          case_id: string
+          created_at?: string | null
+          description?: string | null
+          gender?: string | null
+          id?: string
+          incident_type?: string | null
+          location?: string | null
+          triage_level?: string | null
+          updated_at?: string | null
+          vital_signs?: Json | null
+        }
+        Update: {
+          age?: number | null
+          ai_analysis?: Json | null
+          case_id?: string
+          created_at?: string | null
+          description?: string | null
+          gender?: string | null
+          id?: string
+          incident_type?: string | null
+          location?: string | null
+          triage_level?: string | null
+          updated_at?: string | null
+          vital_signs?: Json | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
