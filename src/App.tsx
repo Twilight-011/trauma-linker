@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import PreviousPatients from "./pages/PreviousPatients";
+import TestDashboard from "./components/TestDashboard";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/test" element={<TestDashboard />} />
           <Route path="/new-patient" element={<NewPatient />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
