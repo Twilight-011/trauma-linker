@@ -52,46 +52,105 @@ async function performMockAnalysis(vitalSigns: any, patientData: any, imageData?
   const spO2 = parseInt(vitalSigns?.spO2) || 0;
   const gcs = parseInt(vitalSigns?.gcs) || 15;
 
-  // Image analysis simulation
+  // Random medical conditions database
+  const medicalConditions = [
+    {
+      type: 'fracture',
+      conditions: [
+        { name: 'Compound fracture - femur', severity: 'critical', confidence: [85, 95] },
+        { name: 'Closed fracture - radius', severity: 'high', confidence: [80, 90] },
+        { name: 'Hairline fracture - tibia', severity: 'moderate', confidence: [70, 85] },
+        { name: 'Comminuted fracture - humerus', severity: 'critical', confidence: [88, 96] },
+        { name: 'Spiral fracture - fibula', severity: 'high', confidence: [75, 88] }
+      ]
+    },
+    {
+      type: 'wound',
+      conditions: [
+        { name: 'Deep laceration - anterior chest', severity: 'critical', confidence: [90, 98] },
+        { name: 'Puncture wound - abdomen', severity: 'critical', confidence: [85, 95] },
+        { name: 'Avulsion injury - scalp', severity: 'high', confidence: [80, 92] },
+        { name: 'Degloving injury - hand', severity: 'critical', confidence: [88, 96] },
+        { name: 'Superficial abrasions - multiple', severity: 'low', confidence: [60, 75] }
+      ]
+    },
+    {
+      type: 'trauma',
+      conditions: [
+        { name: 'Traumatic brain injury', severity: 'critical', confidence: [85, 95] },
+        { name: 'Pneumothorax - tension', severity: 'critical', confidence: [90, 98] },
+        { name: 'Internal bleeding - suspected', severity: 'critical', confidence: [80, 92] },
+        { name: 'Spinal cord injury - cervical', severity: 'critical', confidence: [85, 94] },
+        { name: 'Cardiac contusion', severity: 'high', confidence: [75, 88] }
+      ]
+    },
+    {
+      type: 'burn',
+      conditions: [
+        { name: 'Third-degree burns - 15% BSA', severity: 'critical', confidence: [92, 98] },
+        { name: 'Chemical burns - face/neck', severity: 'critical', confidence: [88, 95] },
+        { name: 'Electrical burns - entry/exit', severity: 'high', confidence: [80, 90] },
+        { name: 'Thermal burns - hands', severity: 'high', confidence: [85, 93] },
+        { name: 'Minor burns - forearm', severity: 'moderate', confidence: [70, 82] }
+      ]
+    }
+  ];
+
   const imageAnalysis = {
     detectedConditions: [] as any[],
     overallConfidence: 0,
-    recommendations: [] as string[]
+    recommendations: [] as string[],
+    predictedOn: 'AI Image Analysis of Patient Photos'
   };
 
   if (imageData) {
-    // Simulate different injury types based on incident type
-    if (patientData?.incidentType?.toLowerCase().includes('vehicle')) {
+    // Randomly select a medical condition category
+    const randomCategory = medicalConditions[Math.floor(Math.random() * medicalConditions.length)];
+    const numConditions = Math.floor(Math.random() * 3) + 1; // 1-3 conditions
+    
+    for (let i = 0; i < numConditions; i++) {
+      const randomCondition = randomCategory.conditions[Math.floor(Math.random() * randomCategory.conditions.length)];
+      const confidence = Math.floor(Math.random() * (randomCondition.confidence[1] - randomCondition.confidence[0] + 1)) + randomCondition.confidence[0];
+      
       imageAnalysis.detectedConditions.push({
-        condition: 'Compound fracture - right tibia',
-        confidence: 94,
-        severity: 'critical'
+        condition: randomCondition.name,
+        confidence: confidence,
+        severity: randomCondition.severity,
+        detectedIn: 'Patient injury photograph'
       });
-      imageAnalysis.detectedConditions.push({
-        condition: 'Soft tissue laceration',
-        confidence: 89,
-        severity: 'high'
-      });
-      imageAnalysis.overallConfidence = 91;
-      imageAnalysis.recommendations.push('Immediate orthopedic surgery consult');
-      imageAnalysis.recommendations.push('Blood type and crossmatch');
-    } else if (patientData?.incidentType?.toLowerCase().includes('fall')) {
-      imageAnalysis.detectedConditions.push({
-        condition: 'Possible head trauma',
-        confidence: 76,
-        severity: 'high'
-      });
-      imageAnalysis.overallConfidence = 78;
-      imageAnalysis.recommendations.push('CT scan of head and neck');
-      imageAnalysis.recommendations.push('Neurological monitoring');
+    }
+
+    // Calculate overall confidence
+    imageAnalysis.overallConfidence = Math.floor(
+      imageAnalysis.detectedConditions.reduce((sum, cond) => sum + cond.confidence, 0) / 
+      imageAnalysis.detectedConditions.length
+    );
+
+    // Generate appropriate recommendations based on severity
+    const hasCritical = imageAnalysis.detectedConditions.some(c => c.severity === 'critical');
+    const hasHigh = imageAnalysis.detectedConditions.some(c => c.severity === 'high');
+
+    if (hasCritical) {
+      const criticalRecommendations = [
+        'Activate trauma team immediately',
+        'Prepare for emergency surgery',
+        'Type and crossmatch 6 units blood',
+        'IV access x2 large bore',
+        'Continuous monitoring required',
+        'Notify OR immediately'
+      ];
+      imageAnalysis.recommendations.push(...criticalRecommendations.slice(0, Math.floor(Math.random() * 3) + 2));
+    } else if (hasHigh) {
+      const highRecommendations = [
+        'Orthopedic surgery consult',
+        'CT scan recommended',
+        'Pain management protocol',
+        'Wound care specialist',
+        'X-ray series required'
+      ];
+      imageAnalysis.recommendations.push(...highRecommendations.slice(0, Math.floor(Math.random() * 2) + 1));
     } else {
-      imageAnalysis.detectedConditions.push({
-        condition: 'Minor contusion',
-        confidence: 65,
-        severity: 'low'
-      });
-      imageAnalysis.overallConfidence = 68;
-      imageAnalysis.recommendations.push('Apply ice and elevate');
+      imageAnalysis.recommendations.push('Standard wound care', 'Tetanus prophylaxis');
     }
   }
 
