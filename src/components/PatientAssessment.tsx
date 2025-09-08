@@ -11,6 +11,11 @@ import demoFracture from '@/assets/demo-fracture.jpg';
 import demoWound from '@/assets/demo-wound.jpg';
 import demoBurn from '@/assets/demo-burn.jpg';
 import demoTrauma from '@/assets/demo-trauma.jpg';
+import demoHeadTrauma from '@/assets/demo-head-trauma.jpg';
+import demoAbdominalInjury from '@/assets/demo-abdominal-injury.jpg';
+import demoCompoundFracture from '@/assets/demo-compound-fracture.jpg';
+import demoChestTrauma from '@/assets/demo-chest-trauma.jpg';
+import demoSevereBurn from '@/assets/demo-severe-burn.jpg';
 
 type VitalStatus = 'normal' | 'warning' | 'critical';
 
@@ -54,7 +59,12 @@ const PatientAssessment = () => {
     { name: 'Fracture Demo', type: 'fracture', src: demoFracture },
     { name: 'Wound Demo', type: 'wound', src: demoWound },
     { name: 'Burn Demo', type: 'burn', src: demoBurn },
-    { name: 'Trauma Demo', type: 'trauma', src: demoTrauma }
+    { name: 'Trauma Demo', type: 'trauma', src: demoTrauma },
+    { name: 'Head Trauma', type: 'head-trauma', src: demoHeadTrauma },
+    { name: 'Abdominal Injury', type: 'abdominal-injury', src: demoAbdominalInjury },
+    { name: 'Compound Fracture', type: 'compound-fracture', src: demoCompoundFracture },
+    { name: 'Chest Trauma', type: 'chest-trauma', src: demoChestTrauma },
+    { name: 'Severe Burn', type: 'severe-burn', src: demoSevereBurn }
   ];
 
   const generateRandomVitals = () => {
@@ -185,7 +195,7 @@ const PatientAssessment = () => {
         {/* Demo Image Selection */}
         <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
           <h3 className="text-sm font-semibold mb-3 text-blue-800">Test AI Model with Demo Images</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
             {demoImages.map((demo) => (
               <Button
                 key={demo.type}

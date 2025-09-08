@@ -2,6 +2,7 @@
 import React from 'react';
 import Layout from '@/components/Layout';
 import PatientInputForm from '@/components/PatientInputForm';
+import PatientAssessment from '@/components/PatientAssessment';
 import EmergencyResponseAgent from '@/components/EmergencyResponseAgent';
 
 const NewPatient = () => {
@@ -12,6 +13,7 @@ const NewPatient = () => {
         <p className="text-gray-600 text-center mb-6">Complete this form to assess an unidentified patient at the accident site</p>
         <EmergencyResponseAgent />
         <PatientInputForm />
+        <PatientAssessment />
       </div>
     </Layout>
   );
