@@ -34,46 +34,63 @@ export const useEnhancedAI = (): UseEnhancedAIReturn => {
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const { toast } = useToast();
 
-  const simulateImageAnalysis = async (imageFile: File | null): Promise<Partial<AIAnalysisResult>> => {
-    // Check if this is a demo image with predefined results
-    const demoData = localStorage.getItem('demo-image-data');
-    if (demoData) {
-      const parsedDemo = JSON.parse(demoData);
-      localStorage.removeItem('demo-image-data'); // Clean up
-      
-      return {
-        injuries: parsedDemo.expectedResults.injuries.map((injury: string, index: number) => ({
-          name: injury,
-          confidence: parsedDemo.expectedResults.confidence - (index * 3),
-          severity: index === 0 ? 'critical' : index === 1 ? 'high' : 'moderate',
-          bodyRegion: getBodyRegionFromInjury(injury)
-        })),
-        overallConfidence: parsedDemo.expectedResults.confidence
-      };
+  const simulateImageAnalysis = async (imageFile: File | null): Promise<Partial<AIAnalysisResult> & { imageAnalysis?: { detectedConditions: any[] } }> => {
+    // Enhanced simulation based on image filename/type
+    const fileName = imageFile?.name || '';
+    let mockInjuries = [];
+    let confidence = 85;
+
+    if (fileName.includes('fracture')) {
+      mockInjuries = [
+        { condition: 'Compound fracture - tibia', confidence: 94, severity: 'critical', name: 'Compound fracture - tibia', bodyRegion: 'lower extremity' },
+        { condition: 'Bone displacement', confidence: 89, severity: 'high', name: 'Bone displacement', bodyRegion: 'lower extremity' },
+        { condition: 'Soft tissue damage', confidence: 76, severity: 'moderate', name: 'Soft tissue damage', bodyRegion: 'soft tissue' }
+      ];
+      confidence = 92;
+    } else if (fileName.includes('wound')) {
+      mockInjuries = [
+        { condition: 'Deep laceration', confidence: 91, severity: 'high', name: 'Deep laceration', bodyRegion: 'soft tissue' },
+        { condition: 'Arterial bleeding', confidence: 87, severity: 'critical', name: 'Arterial bleeding', bodyRegion: 'circulatory' },
+        { condition: 'Foreign body presence', confidence: 73, severity: 'moderate', name: 'Foreign body presence', bodyRegion: 'soft tissue' }
+      ];
+      confidence = 89;
+    } else if (fileName.includes('burn')) {
+      mockInjuries = [
+        { condition: 'Third-degree burns', confidence: 88, severity: 'critical', name: 'Third-degree burns', bodyRegion: 'integumentary' },
+        { condition: 'Thermal injury - 15% BSA', confidence: 85, severity: 'high', name: 'Thermal injury', bodyRegion: 'integumentary' },
+        { condition: 'Inhalation injury risk', confidence: 67, severity: 'high', name: 'Inhalation injury risk', bodyRegion: 'respiratory' }
+      ];
+      confidence = 86;
+    } else if (fileName.includes('trauma')) {
+      mockInjuries = [
+        { condition: 'Multiple trauma injuries', confidence: 93, severity: 'critical', name: 'Multiple trauma injuries', bodyRegion: 'multiple' },
+        { condition: 'Internal bleeding', confidence: 79, severity: 'critical', name: 'Internal bleeding', bodyRegion: 'circulatory' },
+        { condition: 'Possible organ damage', confidence: 71, severity: 'high', name: 'Possible organ damage', bodyRegion: 'abdomen' }
+      ];
+      confidence = 90;
+    } else {
+      // Default simulation for unknown images
+      mockInjuries = [
+        { condition: 'Unspecified injury', confidence: 70, severity: 'moderate', name: 'Unspecified injury', bodyRegion: 'unspecified' },
+        { condition: 'Soft tissue trauma', confidence: 65, severity: 'moderate', name: 'Soft tissue trauma', bodyRegion: 'soft tissue' }
+      ];
+      confidence = 75;
     }
 
-    // Enhanced AI simulation for uploaded images
-    if (!imageFile) {
-      return {
-        injuries: [],
-        overallConfidence: 0
-      };
-    }
-
-    // Simulate advanced computer vision analysis
+    // Simulate processing time
     await new Promise(resolve => setTimeout(resolve, 1500));
 
-    // More sophisticated injury detection simulation
-    const mockInjuries = [
-      { name: 'Compound fracture - right tibia', confidence: 94, severity: 'critical' as const, bodyRegion: 'lower extremity' },
-      { name: 'Soft tissue laceration', confidence: 89, severity: 'high' as const, bodyRegion: 'lower extremity' },
-      { name: 'Possible vascular damage', confidence: 76, severity: 'high' as const, bodyRegion: 'circulatory' },
-      { name: 'Contusion - surrounding area', confidence: 68, severity: 'moderate' as const, bodyRegion: 'soft tissue' }
-    ];
-
     return {
-      injuries: mockInjuries,
-      overallConfidence: 89
+      injuries: mockInjuries.map(injury => ({
+        name: injury.name,
+        confidence: injury.confidence,
+        severity: injury.severity,
+        bodyRegion: injury.bodyRegion
+      })),
+      imageAnalysis: {
+        detectedConditions: mockInjuries
+      },
+      overallConfidence: confidence
     };
   };
 

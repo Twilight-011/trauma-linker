@@ -5,6 +5,8 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Camera, Activity, AlertTriangle, Play } from 'lucide-react';
 import { useEnhancedAI } from '@/hooks/useEnhancedAI';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import demoFracture from '@/assets/demo-fracture.jpg';
 import demoWound from '@/assets/demo-wound.jpg';
 import demoBurn from '@/assets/demo-burn.jpg';
@@ -44,6 +46,9 @@ const PatientAssessment = () => {
   const { analyzePatientData, isAnalyzing, analysisProgress } = useEnhancedAI();
   const [analysisResult, setAnalysisResult] = useState<any>(null);
   const [selectedDemo, setSelectedDemo] = useState<string>('');
+  const [currentVitals, setCurrentVitals] = useState<any>(null);
+  const [currentPatientData, setCurrentPatientData] = useState<any>(null);
+  const { toast } = useToast();
 
   const demoImages = [
     { name: 'Fracture Demo', type: 'fracture', src: demoFracture },
@@ -75,6 +80,45 @@ const PatientAssessment = () => {
     };
   };
 
+  const saveToDatabase = async (patientData: any, vitals: any, analysisResult: any, imageType: string) => {
+    try {
+      // Generate a unique case ID
+      const caseId = `CASE-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Save patient data to database
+      const { data, error } = await supabase
+        .from('patients')
+        .insert({
+          case_id: caseId,
+          age: patientData.age,
+          gender: patientData.gender,
+          incident_type: patientData.incidentType,
+          description: `AI Test - ${imageType} injury simulation`,
+          vital_signs: vitals,
+          ai_analysis: analysisResult,
+          triage_level: analysisResult.vitalSignsAnalysis?.riskScore > 70 ? 'critical' : 
+                       analysisResult.vitalSignsAnalysis?.riskScore > 40 ? 'urgent' : 'standard'
+        })
+        .select();
+
+      if (error) {
+        console.error('Database save error:', error);
+        toast({
+          title: 'Database Error',
+          description: 'Failed to save test results to database',
+          variant: 'destructive'
+        });
+      } else {
+        toast({
+          title: 'Test Results Saved',
+          description: `Patient case ${caseId} saved to database`,
+        });
+      }
+    } catch (error) {
+      console.error('Database save error:', error);
+    }
+  };
+
   const handleDemoTest = async (demoImage: any) => {
     setSelectedDemo(demoImage.name);
     
@@ -86,11 +130,24 @@ const PatientAssessment = () => {
     const vitals = generateRandomVitals();
     const patientData = generateRandomPatientData();
     
+    // Store current test data
+    setCurrentVitals(vitals);
+    setCurrentPatientData(patientData);
+    
     try {
       const result = await analyzePatientData(file, vitals, patientData);
       setAnalysisResult(result);
+      
+      // Save to database
+      await saveToDatabase(patientData, vitals, result, demoImage.type);
+      
     } catch (error) {
       console.error('Analysis failed:', error);
+      toast({
+        title: 'Analysis Failed',
+        description: 'Failed to complete AI analysis',
+        variant: 'destructive'
+      });
     }
   };
 
@@ -197,15 +254,53 @@ const PatientAssessment = () => {
           </div>
 
           <div>
+            <div className="mb-3">
+              <h4 className="text-sm font-medium mb-2">Current Test Vitals</h4>
+              {currentPatientData && (
+                <div className="text-xs text-gray-600 mb-2">
+                  Patient: {currentPatientData.age}y {currentPatientData.gender}, {currentPatientData.incidentType}
+                </div>
+              )}
+            </div>
             <div className="grid grid-cols-2 gap-3 vital-container">
-              {analysisResult ? (
+              {currentVitals ? (
                 <>
-                  <VitalSign name="Heart Rate" value={85} unit="bpm" status="normal" />
-                  <VitalSign name="Blood Pressure" value={120} unit="/80" status="normal" />
-                  <VitalSign name="SpO2" value={98} unit="%" status="normal" />
-                  <VitalSign name="Resp. Rate" value={16} unit="bpm" status="normal" />
-                  <VitalSign name="Temperature" value={37.1} unit="°C" status="normal" />
-                  <VitalSign name="GCS" value={15} unit="/15" status="normal" />
+                  <VitalSign 
+                    name="Heart Rate" 
+                    value={currentVitals.heartRate} 
+                    unit="bpm" 
+                    status={getStatusFromValue('Heart Rate', currentVitals.heartRate)} 
+                  />
+                  <VitalSign 
+                    name="Blood Pressure" 
+                    value={parseInt(currentVitals.bloodPressure.split('/')[0])} 
+                    unit={`/${currentVitals.bloodPressure.split('/')[1]}`} 
+                    status="normal" 
+                  />
+                  <VitalSign 
+                    name="SpO2" 
+                    value={currentVitals.spO2} 
+                    unit="%" 
+                    status={getStatusFromValue('SpO2', currentVitals.spO2)} 
+                  />
+                  <VitalSign 
+                    name="Resp. Rate" 
+                    value={currentVitals.respiratoryRate} 
+                    unit="bpm" 
+                    status="normal" 
+                  />
+                  <VitalSign 
+                    name="Temperature" 
+                    value={parseFloat(currentVitals.temperature)} 
+                    unit="°C" 
+                    status="normal" 
+                  />
+                  <VitalSign 
+                    name="GCS" 
+                    value={currentVitals.gcs} 
+                    unit="/15" 
+                    status={getStatusFromValue('GCS', currentVitals.gcs)} 
+                  />
                 </>
               ) : (
                 <>
@@ -225,6 +320,26 @@ const PatientAssessment = () => {
                 <div className="text-sm text-red-800">
                   <p className="font-medium">AI Analysis Alert:</p>
                   <p>Risk Score: {analysisResult.vitalSignsAnalysis.riskScore}% - {analysisResult.vitalSignsAnalysis.concerningValues.join(', ')}</p>
+                </div>
+              </div>
+            )}
+
+            {analysisResult && (
+              <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <div className="text-sm text-green-800">
+                  <p className="font-medium">AI Predictions:</p>
+                  <div className="mt-2 space-y-1">
+                    {analysisResult.injuries?.map((injury: any, index: number) => (
+                      <div key={index} className="flex justify-between text-xs">
+                        <span>{injury.name}</span>
+                        <span className="font-medium">{injury.confidence}% confidence</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-2 pt-2 border-t border-green-300">
+                    <p className="text-xs">Treatment: {analysisResult.treatmentProtocol}</p>
+                    <p className="text-xs">Survival Rate: {analysisResult.estimatedSurvivalRate}%</p>
+                  </div>
                 </div>
               </div>
             )}
