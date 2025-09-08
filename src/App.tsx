@@ -12,7 +12,6 @@ import Settings from "./pages/Settings";
 import PreviousPatients from "./pages/PreviousPatients";
 import TestDashboard from "./components/TestDashboard";
 import SystemTestResults from "./components/SystemTestResults";
-import CompactTestPanel from "./components/CompactTestPanel";
 
 const queryClient = new QueryClient();
 
@@ -32,7 +31,6 @@ const App = () => (
           <Route path="/previous-patients" element={<PreviousPatients />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-        <CompactTestPanel />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
