@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bot, Loader2, MapPin, AlertTriangle, BarChart3, Database } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import LiveLocationTracker from './LiveLocationTracker';
 import HospitalInfo from './HospitalInfo';
 import { useEmergencyAgent } from '@/hooks/useEmergencyAgent';
 
@@ -122,8 +121,6 @@ const EmergencyResponseAgent = () => {
                 </div>
               </AlertDescription>
             </Alert>
-            
-            {liveLocation && <LiveLocationTracker />}
           </div>
         )}
         

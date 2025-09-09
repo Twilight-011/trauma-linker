@@ -4,7 +4,6 @@ import Layout from '@/components/Layout';
 import PatientInputForm from '@/components/PatientInputForm';
 import PatientAssessment from '@/components/PatientAssessment';
 import EmergencyResponseAgent from '@/components/EmergencyResponseAgent';
-import LiveLocationTracker from '@/components/LiveLocationTracker';
 
 const NewPatient = () => {
   return (
@@ -20,7 +19,6 @@ const NewPatient = () => {
           </div>
           
           <div className="space-y-6">
-            <LiveLocationTracker />
             <PatientAssessment />
           </div>
         </div>
