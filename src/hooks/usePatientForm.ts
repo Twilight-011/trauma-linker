@@ -76,12 +76,18 @@ export const usePatientForm = () => {
   };
 
   const handleSubmit = async (data: PatientData) => {
+    console.log('Form submission started with data:', data);
+    console.log('Vital signs:', vitalSigns);
+    console.log('Uploaded image:', uploadedImage);
+    
     setIsSubmitting(true);
     setShowResults(false);
     
     try {
       // Run enhanced AI analysis
       const aiResults = await analyzePatientData(uploadedImage, vitalSigns, data);
+      console.log('AI analysis completed:', aiResults);
+      
       setAnalysisData(aiResults);
       setShowResults(true);
       
@@ -122,6 +128,8 @@ export const usePatientForm = () => {
     aiAnalysisProgress: analysisProgress,
     analysisData,
     vitalSigns,
+    setVitalSigns,
+    setUploadedImage,
     handleVitalSignChange,
     handleImageUpload,
     handleSubmit,

@@ -214,13 +214,22 @@ export const useEnhancedAI = (): UseEnhancedAIReturn => {
 
       setAnalysisProgress(100);
 
-      const result: AIAnalysisResult = {
-        injuries: imageResults.injuries || [],
-        recommendations,
-        vitalSignsAnalysis: vitalAnalysis,
+      const result: any = {
+        imageAnalysis: {
+          detectedConditions: imageResults.injuries || [],
+          overallConfidence: imageResults.overallConfidence || 0,
+          recommendations: recommendations.map(r => r.action)
+        },
+        vitalSignsAnalysis: {
+          riskScore: vitalAnalysis.riskScore,
+          concerningValues: vitalAnalysis.concerningValues,
+          recommendations: recommendations.filter(r => r.priority === 'immediate').map(r => r.action)
+        },
         overallConfidence: imageResults.overallConfidence || 0,
         treatmentProtocol,
-        estimatedSurvivalRate: survivalRate
+        estimatedSurvivalRate: survivalRate,
+        injuries: imageResults.injuries || [],
+        recommendations
       };
 
       toast({

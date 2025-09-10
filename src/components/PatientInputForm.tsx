@@ -7,19 +7,24 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Clipboard, AlertCircle } from 'lucide-react';
 import { Form } from '@/components/ui/form';
+import { useToast } from '@/hooks/use-toast';
 import ImageUpload from '@/components/patient/ImageUpload';
 import VitalSigns from '@/components/patient/VitalSigns';
 import AiAnalysisResults from '@/components/patient/AiAnalysisResults';
+import FinalAssessmentReport from '@/components/FinalAssessmentReport';
 import { usePatientForm } from '@/hooks/usePatientForm';
 
 const PatientInputForm = () => {
+  const { toast } = useToast();
   const { 
     form, 
     isSubmitting, 
     showResults, 
     aiAnalysisProgress,
     analysisData,
-    vitalSigns, 
+    vitalSigns,
+    setVitalSigns,
+    setUploadedImage,
     handleVitalSignChange,
     handleImageUpload,
     handleSubmit,
@@ -27,6 +32,16 @@ const PatientInputForm = () => {
   } = usePatientForm();
   
   const [images, setImages] = useState<FileList | null>(null);
+  const [caseId, setCaseId] = useState<string>('');
+  const [submittedData, setSubmittedData] = useState<any>(null);
+
+  // Override handleSubmit to capture case data for the report
+  const handleFormSubmit = async (data: any) => {
+    const generatedCaseId = `TR-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    setCaseId(generatedCaseId);
+    setSubmittedData(data);
+    await handleSubmit(data);
+  };
 
   return (
     <Card className="w-full">
@@ -38,7 +53,7 @@ const PatientInputForm = () => {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -291,6 +306,17 @@ const PatientInputForm = () => {
                 isAnalyzing={aiAnalysisProgress > 0 && aiAnalysisProgress < 100}
               />
               
+              {/* Final Assessment Report */}
+              {showResults && analysisData && submittedData && (
+                <FinalAssessmentReport
+                  patientData={submittedData}
+                  vitalSigns={vitalSigns}
+                  aiAnalysis={analysisData}
+                  caseId={caseId}
+                  timestamp={new Date()}
+                />
+              )}
+              
               <div className="bg-yellow-50 p-4 rounded-md border border-yellow-200 flex items-start">
                 <AlertCircle className="h-5 w-5 text-yellow-500 mr-2 flex-shrink-0 mt-0.5" />
                 <div className="text-sm text-yellow-800">
@@ -301,6 +327,46 @@ const PatientInputForm = () => {
             </div>
             
             <div className="flex justify-end space-x-2">
+              <Button 
+                variant="secondary" 
+                type="button" 
+                onClick={() => {
+                  // Fill form with test data
+                  form.setValue("gender", "Male");
+                  form.setValue("estimatedAge", "Young Adult (18-35)");
+                  form.setValue("incidentType", "Road Traffic Accident");
+                  form.setValue("incidentDetails", "High-speed collision with compound fracture");
+                  form.setValue("location", "NH-8");
+                  form.setValue("locationDetails", "Gurugram, Haryana");
+                  form.setValue("responsiveness", "semi-responsive");
+                  form.setValue("breathing", "labored");
+                  form.setValue("bleeding", "severe");
+                  form.setValue("injuryLocation", "Lower Leg - Right");
+                  form.setValue("physicalFindings", "Compound fracture visible, active bleeding, patient in distress");
+                  
+                  // Set test vital signs
+                  setVitalSigns({
+                    heartRate: '128',
+                    bloodPressure: '95/65',
+                    spO2: '94',
+                    respRate: '22',
+                    temperature: '37.2',
+                    gcs: '14',
+                  });
+                  
+                  // Simulate uploaded image by creating a test file
+                  const testFileName = 'test-fracture-image.jpg';
+                  const testFile = new File(['test'], testFileName, { type: 'image/jpeg' });
+                  setUploadedImage(testFile);
+                  
+                  toast({
+                    title: "Test Data Loaded",
+                    description: "Sample trauma case data has been loaded. Click Submit Assessment to test."
+                  });
+                }}
+              >
+                Load Test Data
+              </Button>
               <Button variant="outline" type="button" onClick={() => navigate('/')}>
                 Cancel
               </Button>
