@@ -54,7 +54,7 @@ const AiAnalysisResults = ({ progress, analysisData, isAnalyzing }: AiAnalysisRe
     );
   }
 
-  if (!analysisData) {
+  if (!analysisData || !analysisData.imageAnalysis || !analysisData.vitalSignsAnalysis) {
     return (
       <Card className="border-dashed">
         <CardContent className="pt-6">
@@ -108,7 +108,7 @@ const AiAnalysisResults = ({ progress, analysisData, isAnalyzing }: AiAnalysisRe
             Image Analysis ({analysisData.imageAnalysis.overallConfidence}% confidence)
           </h4>
           <div className="space-y-2">
-            {analysisData.imageAnalysis.detectedConditions.map((condition, index) => (
+            {analysisData.imageAnalysis.detectedConditions?.map((condition, index) => (
               <div key={index} className="flex justify-between items-center p-2 rounded bg-gray-50">
                 <span className="font-medium">{condition.condition}</span>
                 <div className="flex items-center gap-2">
@@ -118,7 +118,11 @@ const AiAnalysisResults = ({ progress, analysisData, isAnalyzing }: AiAnalysisRe
                   <span className="text-sm text-gray-600">{condition.confidence}%</span>
                 </div>
               </div>
-            ))}
+            )) || (
+              <div className="p-2 rounded bg-gray-50 text-gray-600 text-sm">
+                No conditions detected
+              </div>
+            )}
           </div>
         </div>
 
@@ -128,7 +132,7 @@ const AiAnalysisResults = ({ progress, analysisData, isAnalyzing }: AiAnalysisRe
             <Activity className="h-4 w-4 mr-1" />
             Vital Signs Assessment (Risk Score: {analysisData.vitalSignsAnalysis.riskScore})
           </h4>
-          {analysisData.vitalSignsAnalysis.concerningValues.length > 0 ? (
+          {analysisData.vitalSignsAnalysis.concerningValues?.length > 0 ? (
             <div className="space-y-1">
               {analysisData.vitalSignsAnalysis.concerningValues.map((value, index) => (
                 <Alert key={index} variant="destructive">
@@ -148,7 +152,7 @@ const AiAnalysisResults = ({ progress, analysisData, isAnalyzing }: AiAnalysisRe
         <div>
           <h4 className="font-medium mb-2">Recommended Actions</h4>
           <div className="space-y-1">
-            {[...analysisData.imageAnalysis.recommendations, ...analysisData.vitalSignsAnalysis.recommendations]
+            {[...(analysisData.imageAnalysis.recommendations || []), ...(analysisData.vitalSignsAnalysis.recommendations || [])]
               .slice(0, 5)
               .map((recommendation, index) => (
                 <div key={index} className="flex items-start p-2 rounded bg-blue-50 text-blue-800 text-sm">
