@@ -14,129 +14,386 @@ export type Database = {
   }
   public: {
     Tables: {
-      emergency_cases: {
+      admin_audit_logs: {
         Row: {
-          assigned_at: string | null
-          completed_at: string | null
-          hospital_id: string | null
+          action_type: string
+          description: string
           id: string
-          patient_id: string | null
-          priority_level: string | null
-          status: string | null
+          performed_at: string | null
         }
         Insert: {
-          assigned_at?: string | null
-          completed_at?: string | null
-          hospital_id?: string | null
+          action_type: string
+          description: string
           id?: string
-          patient_id?: string | null
-          priority_level?: string | null
-          status?: string | null
+          performed_at?: string | null
         }
         Update: {
-          assigned_at?: string | null
-          completed_at?: string | null
-          hospital_id?: string | null
+          action_type?: string
+          description?: string
           id?: string
-          patient_id?: string | null
-          priority_level?: string | null
+          performed_at?: string | null
+        }
+        Relationships: []
+      }
+      admin_metrics: {
+        Row: {
+          active_cases: number
+          id: string
+          pending_approvals: number
+          total_hospitals: number
+          total_responders: number
+          updated_at: string | null
+        }
+        Insert: {
+          active_cases?: number
+          id?: string
+          pending_approvals?: number
+          total_hospitals?: number
+          total_responders?: number
+          updated_at?: string | null
+        }
+        Update: {
+          active_cases?: number
+          id?: string
+          pending_approvals?: number
+          total_hospitals?: number
+          total_responders?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      emergency_cases: {
+        Row: {
+          assigned_hospital: string | null
+          created_at: string | null
+          emergency_type: string
+          id: string
+          location_address: string | null
+          location_lat: number | null
+          location_long: number | null
+          notes: string | null
+          patient_name: string
+          responder_id: string | null
+          severity: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_hospital?: string | null
+          created_at?: string | null
+          emergency_type: string
+          id?: string
+          location_address?: string | null
+          location_lat?: number | null
+          location_long?: number | null
+          notes?: string | null
+          patient_name: string
+          responder_id?: string | null
+          severity: string
           status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_hospital?: string | null
+          created_at?: string | null
+          emergency_type?: string
+          id?: string
+          location_address?: string | null
+          location_lat?: number | null
+          location_long?: number | null
+          notes?: string | null
+          patient_name?: string
+          responder_id?: string | null
+          severity?: string
+          status?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "emergency_cases_hospital_id_fkey"
-            columns: ["hospital_id"]
+            foreignKeyName: "emergency_cases_assigned_hospital_fkey"
+            columns: ["assigned_hospital"]
             isOneToOne: false
             referencedRelation: "hospitals"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "emergency_cases_patient_id_fkey"
-            columns: ["patient_id"]
+            foreignKeyName: "emergency_cases_responder_id_fkey"
+            columns: ["responder_id"]
             isOneToOne: false
-            referencedRelation: "patients"
+            referencedRelation: "responders"
             referencedColumns: ["id"]
           },
         ]
       }
-      hospitals: {
+      emergency_responder_details: {
         Row: {
-          address: string | null
-          capacity: Json | null
+          availability_status: string | null
+          certification_level: string | null
           created_at: string | null
+          current_location_lat: number | null
+          current_location_long: number | null
           id: string
-          latitude: number | null
-          longitude: number | null
-          name: string
-          phone: string | null
-          specialties: string[] | null
+          specializations: string[] | null
+          updated_at: string | null
+          user_id: string
+          years_experience: number | null
         }
         Insert: {
-          address?: string | null
-          capacity?: Json | null
+          availability_status?: string | null
+          certification_level?: string | null
           created_at?: string | null
+          current_location_lat?: number | null
+          current_location_long?: number | null
           id?: string
-          latitude?: number | null
-          longitude?: number | null
-          name: string
-          phone?: string | null
-          specialties?: string[] | null
+          specializations?: string[] | null
+          updated_at?: string | null
+          user_id: string
+          years_experience?: number | null
         }
         Update: {
-          address?: string | null
-          capacity?: Json | null
+          availability_status?: string | null
+          certification_level?: string | null
           created_at?: string | null
+          current_location_lat?: number | null
+          current_location_long?: number | null
           id?: string
-          latitude?: number | null
-          longitude?: number | null
+          specializations?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+          years_experience?: number | null
+        }
+        Relationships: []
+      }
+      hospital_details: {
+        Row: {
+          accreditation: string[] | null
+          address: string
+          bed_capacity: number | null
+          city: string
+          created_at: string | null
+          emergency_contact: string | null
+          hospital_name: string
+          hospital_type: string | null
+          id: string
+          license_number: string | null
+          pincode: string
+          specialities: string[] | null
+          state: string
+          trauma_level: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          accreditation?: string[] | null
+          address: string
+          bed_capacity?: number | null
+          city: string
+          created_at?: string | null
+          emergency_contact?: string | null
+          hospital_name: string
+          hospital_type?: string | null
+          id?: string
+          license_number?: string | null
+          pincode: string
+          specialities?: string[] | null
+          state: string
+          trauma_level?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          accreditation?: string[] | null
+          address?: string
+          bed_capacity?: number | null
+          city?: string
+          created_at?: string | null
+          emergency_contact?: string | null
+          hospital_name?: string
+          hospital_type?: string | null
+          id?: string
+          license_number?: string | null
+          pincode?: string
+          specialities?: string[] | null
+          state?: string
+          trauma_level?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      hospitals: {
+        Row: {
+          address: string
+          approval_status: string | null
+          bed_capacity: number
+          city: string
+          created_at: string | null
+          email: string
+          id: string
+          name: string
+          phone: string
+          pincode: string
+          specialities: string[] | null
+          state: string
+          trauma_level: string
+          updated_at: string | null
+        }
+        Insert: {
+          address: string
+          approval_status?: string | null
+          bed_capacity: number
+          city: string
+          created_at?: string | null
+          email: string
+          id?: string
+          name: string
+          phone: string
+          pincode: string
+          specialities?: string[] | null
+          state: string
+          trauma_level: string
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string
+          approval_status?: string | null
+          bed_capacity?: number
+          city?: string
+          created_at?: string | null
+          email?: string
+          id?: string
           name?: string
-          phone?: string | null
-          specialties?: string[] | null
+          phone?: string
+          pincode?: string
+          specialities?: string[] | null
+          state?: string
+          trauma_level?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
       patients: {
         Row: {
+          admission_date: string | null
           age: number | null
-          ai_analysis: Json | null
-          case_id: string
+          condition: string
           created_at: string | null
-          description: string | null
           gender: string | null
+          hospital_id: string | null
           id: string
-          incident_type: string | null
-          location: string | null
-          triage_level: string | null
+          name: string
+          notes: string | null
+          status: string | null
           updated_at: string | null
-          vital_signs: Json | null
         }
         Insert: {
+          admission_date?: string | null
           age?: number | null
-          ai_analysis?: Json | null
-          case_id: string
+          condition: string
           created_at?: string | null
-          description?: string | null
           gender?: string | null
+          hospital_id?: string | null
           id?: string
-          incident_type?: string | null
-          location?: string | null
-          triage_level?: string | null
+          name: string
+          notes?: string | null
+          status?: string | null
           updated_at?: string | null
-          vital_signs?: Json | null
         }
         Update: {
+          admission_date?: string | null
           age?: number | null
-          ai_analysis?: Json | null
-          case_id?: string
+          condition?: string
           created_at?: string | null
-          description?: string | null
           gender?: string | null
+          hospital_id?: string | null
           id?: string
-          incident_type?: string | null
-          location?: string | null
-          triage_level?: string | null
+          name?: string
+          notes?: string | null
+          status?: string | null
           updated_at?: string | null
-          vital_signs?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patients_hospital_id_fkey"
+            columns: ["hospital_id"]
+            isOneToOne: false
+            referencedRelation: "hospitals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string
+          first_name: string | null
+          id: string
+          is_active: boolean | null
+          last_name: string | null
+          phone: string | null
+          role: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          first_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_name?: string | null
+          phone?: string | null
+          role: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          first_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_name?: string | null
+          phone?: string | null
+          role?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      responders: {
+        Row: {
+          created_at: string | null
+          current_location_lat: number | null
+          current_location_long: number | null
+          email: string
+          id: string
+          name: string
+          phone: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_location_lat?: number | null
+          current_location_long?: number | null
+          email: string
+          id?: string
+          name: string
+          phone: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_location_lat?: number | null
+          current_location_long?: number | null
+          email?: string
+          id?: string
+          name?: string
+          phone?: string
+          status?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
